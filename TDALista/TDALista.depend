@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1505867633 source:/home/alumno/Documentos/Proyectos Orga/TDALista/lista.c
+	<stdio.h>
+	<stdlib.h>
+
