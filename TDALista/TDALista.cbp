@@ -22,6 +22,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="../TDALista" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -34,6 +35,7 @@
 		<Unit filename="lista.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="lista.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
