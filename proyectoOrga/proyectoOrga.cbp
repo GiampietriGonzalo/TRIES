@@ -37,6 +37,13 @@
 		<Unit filename="lista.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="lista_ordenada.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="lista_ordenada.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />
