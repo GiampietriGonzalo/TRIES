@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1506644958 source:/home/alumno/Documentos/Git/TRIES/proyectoOrga/lista.c
+	<stdio.h>
+	<stdlib.h>
+	"lista.h"
+
+1506473612 /home/alumno/Documentos/Git/TRIES/proyectoOrga/lista.h
+

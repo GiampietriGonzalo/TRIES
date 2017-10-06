@@ -44,7 +44,6 @@ int l_insertar(TLista lista, TPosicion pos, TElemento elem){
             nueva->proxima_celda=lista->primer_celda;
             lista->primer_celda=nueva;
             lista->cantidad_elementos++;
-            r=TRUE;
         }
         else{ /*Pos no es el primer elemento de la lista, se debe buscar.*/
           while(aux->proxima_celda!=pos && aux->proxima_celda!=POS_NULA)
@@ -55,11 +54,10 @@ int l_insertar(TLista lista, TPosicion pos, TElemento elem){
               nueva->proxima_celda=pos;
               aux->proxima_celda=nueva;
               lista->cantidad_elementos++;
-              r=TRUE;
           }
         }
+        r=TRUE;
     }
-
 
     return r;
 }
@@ -161,9 +159,8 @@ TElemento l_recuperar(TLista lista, TPosicion pos){
 
 
 
-
 int main(){
-
+    /*
     printf("<<< TESTER TDALista >>>\n");
     printf("\n");
 
@@ -284,5 +281,5 @@ int main(){
 
     printf("---Recuperar elemento que no es el primero ni ultmo---\n");
     printf("Elemento recuperado de una posicion no nula: %d \n" , *((int*)l_recuperar(lista,aux)));
-
+    */
 return 0;}
