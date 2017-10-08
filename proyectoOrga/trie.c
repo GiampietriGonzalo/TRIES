@@ -25,8 +25,9 @@ int f(TNodo* n1, TNodo* n2){
     if(c1>c2)
         res=1;
     else
-        res=-1;
-
+        if(c1<c2)
+			res=-1;
+	
     return res;
 }
 
