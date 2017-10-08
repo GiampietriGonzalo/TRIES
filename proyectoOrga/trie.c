@@ -32,27 +32,8 @@ int f(TNodo* n1, TNodo* n2){
 
 int (*funcion)(TNodo *, TNodo *)=f;
 
-TTrie crear_trie(){
 
-    TTrie tri= malloc(sizeof(TTrie));
-    TNodo node= malloc(sizeof(TNodo));
-    node->hijos=crear_lista_ordenada(funcion);
-    tri->raiz=node;
-    tri->cantidad_elementos=0;
-
-    return tri;
-}
-
-
-int tr_insertar(TTrie tr, char* str){
-
-    int resultado=TRI_NO_INI;
-
-
-
-
-    return resultado;
-}
+//FUNCIONES AUXILIARES
 
 TNodo tr_recuperarPrimero_auxiliar(TTrie tr, char* str){
     /*uscar y retorna el nodo hijo de la raiz que tenga como rótulo el primer caracter de str
@@ -139,28 +120,11 @@ int tr_pertenece_auxiliar(TNodo padre, char* s,int longitud, TTrie tr){
     return resultado;
 } //FIN metodo auxiliar recursivo de pertenece.
 
-int tr_pertenece(TTrie tr, char* str){
+TNodo tr_buscar_auxiliar(TTrie tr,char* str){
 
-    int longitud= strlen(str);
-    int resultado;
-
-    //Busco al hijo de la raiz que contenga el primer caracter de la palabra pasada.
-    TNodo primerNodo=tr_recuperarPrimero_auxiliar(tr,str);
-
-    if(primerNodo!=NULL)
-        resultado=tr_pertenece_auxiliar(tr->raiz,str,longitud,tr);
-
-
-    return resultado;
-}
-
-int recuperar(TTrie tr, char* str){
-
-    int resultado= STR_NO_PER;
-    TNodo nodoActual=tr_recuperarPrimero_auxiliar(tr,str);
+    TNodo nodoActual=tr_recuperarPrimero_auxiliar();
     int longitud=strlen(str);
     int parar=0;
-
 
     if(tr_pertenece(tr,str)==TRUE && nodoActual!=NULL){
 
@@ -185,13 +149,117 @@ int recuperar(TTrie tr, char* str){
         }//fin WHile
 
 
-        if(parar==1)
-            resultado=nodoActual->contador;
-        else
-            resultado=STR_NO_PER;
+        if(parar==2) //No Se encontro el nodo.
+            nodoActual=NULL;
     }
+
+    return nodoActual;
+}
+
+
+
+//FUNCIONES DE trie.h
+
+TTrie crear_trie(){
+
+    TTrie tri= malloc(sizeof(TTrie));
+    TNodo node= malloc(sizeof(TNodo));
+    node->hijos=crear_lista_ordenada(funcion);
+    tri->raiz=node;
+    tri->cantidad_elementos=0;
+
+    return tri;
+}
+
+
+
+int tr_pertenece(TTrie tr, char* str){
+
+    int longitud= strlen(str);
+    int resultado;
+
+    //Busco al hijo de la raiz que contenga el primer caracter de la palabra pasada.
+    TNodo primerNodo=tr_recuperarPrimero_auxiliar(tr,str);
+
+    if(primerNodo!=NULL)
+        resultado=tr_pertenece_auxiliar(tr->raiz,str,longitud,tr);
+
 
     return resultado;
 }
 
+int recuperar(TTrie tr, char* str){
+
+    int resultado= STR_NO_PER;
+    TNodo nodo=tr_buscar_auxiliar(tr,str);
+    if (nodo!=NULL)
+        resultado=nodo->contador;
+
+    return resultado;
+}
+
+int tr_insertar(TTrie tr, char* str){
+
+    int resultado=FALSE;
+    TNodo nodo,nuevo;
+    TListaOrdenada hijos;
+    *char aux=str;
+    int longitud=strlen(str);
+    TListaOrdenada nuevaLista;
+
+    if(tr_pertenece(tr,str)){
+
+        nodo=tr_buscar_auxiliar(tr,str);
+        if(nodo!=NULL){
+            nodo->contador+=1;
+            resultado=TRUE;
+            tr->cantidad_elementos++;
+        }
+    }
+    else{
+        nodo=tr->raiz;
+        hijos=nodo->hijos;
+
+        if(lo_siguiente(hijos)!=0){
+
+            nodo=tr_recuperarHijo_auxiliar(nodo,aux,tr);
+            hijo=nodo->hijos;
+            if (nodo!=NULL){
+                if(nodo->contador>0) nodo->contador++;
+
+                while(lo_size(hijos)!=0){
+                    aux++;
+                    longitud--;
+                    nodo=tr_recuperarHijo_auxiliar(nodo,aux,tr);
+                    if (nodo!=NULL){
+                        hijo=nodo->hijos;
+                        if(nodo->contador>0) nodo->contador++;
+                    }
+                }//fin while
+            }
+        }
+
+        //Agrego los nodos faltantes de la palabra.
+        while(longitud>0){
+
+            nuevo=malloc(sizeof(TNodo));
+            nuevo->contador=0;
+            nuevaLista=crear_lista_ordenada(funcion())
+            nuevo->hijos=nuevaLista;
+            nuevo->rotulo=*aux;
+            nuevo->padre(nodo);
+
+            lo_insertar(hijos,nuevo);
+
+            aux++;
+            tr->cantidad_elementos++;
+            longitud--;
+            hijos=nuevaLista;
+        }
+        resultado=TRUE;
+    }
+    return resultado;
+}
+
 int tr_size(TTrie tr){return tr->cantidad_elementos;}
+
