@@ -53,13 +53,8 @@ int lo_insertar(TListaOrdenada lista, TElemento elem){
     return  tr;
 }
 
-
+int lo_size(TListaOrdenada lista){return lista->cantidad_elementos;}
+TPosicion lo_primera(TListaOrdenada lista){return l_primera(lista->lista);}
 TPosicion lo_ultima(TListaOrdenada lista){return l_ultima(lista->lista);}
 TPosicion lo_siguiente(TListaOrdenada lista, TPosicion pos){return l_siguiente(lista->lista,pos);}
 
-
-
-int main(){
-
-return 0;
-}

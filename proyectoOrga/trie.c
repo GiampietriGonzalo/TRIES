@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "lista_ordenada.h"
 #include <string.h>
 #include "trie.h"
+#include "lista_ordenada.h"
+#include "lista_ordenada.c"
 
 #define POS_NULA NULL
 #define ELE_NULO NULL
@@ -156,17 +157,41 @@ int tr_pertenece(TTrie tr, char* str){
 int recuperar(TTrie tr, char* str){
 
     int resultado= STR_NO_PER;
-    TNodo primerNodo=tr_recuperarPrimero_auxiliar(TTrie tr, char* str);
-    TNodo auxiliar;
+    TNodo nodoActual=tr_recuperarPrimero_auxiliar(tr,str);
+    int longitud=strlen(str);
+    int parar=0;
 
 
-    if(tr_pertenece(tr,str)==TRUE && primerNodo!=NULL){
+    if(tr_pertenece(tr,str)==TRUE && nodoActual!=NULL){
+
+        while(parar==0){
+
+            if(longitud==1 && *str==nodoActual->rotulo && nodoActual->contador>0 )
+                parar=1;
+            else{
+
+                if (longitud==1)
+                    parar=2;
+                else
+                    if(longitud>1 && *str==nodoActual->rotulo){
+                        str++;
+                        longitud--;
+                        nodoActual=tr_recuperarHijo_auxiliar(nodoActual,str,tr);
+
+                        if(nodoActual==NULL)
+                            parar=2;
+                    }
+            }
+        }//fin WHile
 
 
-
+        if(parar==1)
+            resultado=nodoActual->contador;
+        else
+            resultado=STR_NO_PER;
     }
-
-
 
     return resultado;
 }
+
+int tr_size(TTrie tr){return tr->cantidad_elementos;}
