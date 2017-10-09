@@ -27,7 +27,7 @@ int f(TNodo* n1, TNodo* n2){
     else
         if(c1<c2)
 			res=-1;
-	
+
     return res;
 }
 
@@ -36,34 +36,7 @@ int (*funcion)(TNodo *, TNodo *)=f;
 
 //FUNCIONES AUXILIARES
 
-TNodo tr_recuperarPrimero_auxiliar(TTrie tr, char* str){
-    /*uscar y retorna el nodo hijo de la raiz que tenga como rótulo el primer caracter de str
-    Si no lo encuentra, retorna NULL*/
-    TListaOrdenada hijos;
-    TPosicion posActual,siguiente;
-    TNodo primerNodo=NULL;
-    int salir=0;
 
-    if(tr_size(tr)>0 && strlen(str)>0){
-
-
-        hijos= tr->raiz->hijos;
-        posActual= lo_primera(hijos);
-        primerNodo=posActual->elemento;
-
-        while(salir==0 && *str != primerNodo->rotulo){
-            //Busco al hijo de la raiz que contenga el primer caracter de la palabra pasada.
-            siguiente=lo_siguiente(hijos,posActual);
-            if(siguiente==POS_NULA)
-                salir=1;
-            else{
-                posActual=siguiente;
-                primerNodo=posActual->elemento;
-            }
-        }
-    }
-    return primerNodo;
-}
 
 TNodo tr_recuperarHijo_auxiliar(TNodo padre, char* s,TTrie tr){
     /*Buscar y retorna el nodo hijo de un nodo padre pasado por parámetro que tenga como rótulo el primer caracter de s.
@@ -123,7 +96,7 @@ int tr_pertenece_auxiliar(TNodo padre, char* s,int longitud, TTrie tr){
 
 TNodo tr_buscar_auxiliar(TTrie tr,char* str){
 
-    TNodo nodoActual=tr_recuperarPrimero_auxiliar();
+    TNodo nodoActual=tr_recuperarHijo_auxiliar(tr->raiz,str,tr);
     int longitud=strlen(str);
     int parar=0;
 
@@ -180,7 +153,7 @@ int tr_pertenece(TTrie tr, char* str){
     int resultado;
 
     //Busco al hijo de la raiz que contenga el primer caracter de la palabra pasada.
-    TNodo primerNodo=tr_recuperarPrimero_auxiliar(tr,str);
+    TNodo primerNodo=tr_recuperarHijo_auxiliar(tr->raiz,str,tr);
 
     if(primerNodo!=NULL)
         resultado=tr_pertenece_auxiliar(tr->raiz,str,longitud,tr);
@@ -204,7 +177,7 @@ int tr_insertar(TTrie tr, char* str){
     int resultado=FALSE;
     TNodo nodo,nuevo;
     TListaOrdenada hijos;
-    *char aux=str;
+    char* aux=str;
     int longitud=strlen(str);
     TListaOrdenada nuevaLista;
 
@@ -221,10 +194,10 @@ int tr_insertar(TTrie tr, char* str){
         nodo=tr->raiz;
         hijos=nodo->hijos;
 
-        if(lo_siguiente(hijos)!=0){
+        if(lo_size(hijos)!=0){
 
             nodo=tr_recuperarHijo_auxiliar(nodo,aux,tr);
-            hijo=nodo->hijos;
+            hijos=nodo->hijos;
             if (nodo!=NULL){
                 if(nodo->contador>0) nodo->contador++;
 
@@ -233,7 +206,7 @@ int tr_insertar(TTrie tr, char* str){
                     longitud--;
                     nodo=tr_recuperarHijo_auxiliar(nodo,aux,tr);
                     if (nodo!=NULL){
-                        hijo=nodo->hijos;
+                        hijos=nodo->hijos;
                         if(nodo->contador>0) nodo->contador++;
                     }
                 }//fin while
@@ -245,10 +218,10 @@ int tr_insertar(TTrie tr, char* str){
 
             nuevo=malloc(sizeof(TNodo));
             nuevo->contador=0;
-            nuevaLista=crear_lista_ordenada(funcion())
+            nuevaLista=crear_lista_ordenada(funcion());
             nuevo->hijos=nuevaLista;
             nuevo->rotulo=*aux;
-            nuevo->padre(nodo);
+            nuevo->padre=nodo;
 
             lo_insertar(hijos,nuevo);
 

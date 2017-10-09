@@ -53,8 +53,8 @@ int lo_insertar(TListaOrdenada lista, TElemento elem){
     return  tr;
 }
 
-int eliminar(TListaOrdenada lista,TPosicion pos){
-	return eliminar(lista->,pos);
+int lo_eliminar(TListaOrdenada lista,TPosicion pos){
+	return l_eliminar(lista->lista,pos);
 }
 
 int lo_size(TListaOrdenada lista){
@@ -64,7 +64,7 @@ int lo_size(TListaOrdenada lista){
 TPosicion lo_primera(TListaOrdenada lista){
 	return l_primera(lista->lista);
 }
-	
+
 TPosicion lo_ultima(TListaOrdenada lista){
 	return l_ultima(lista->lista);
 	}
