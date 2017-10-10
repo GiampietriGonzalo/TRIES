@@ -53,7 +53,11 @@ TNodo tr_recuperarHijo_auxiliar(TNodo padre, char* s){
 
 
     hijos=padre->hijos;
-
+    /*if(padre->rotulo=='a' && lo_size(padre->hijos)>0){
+        printf("tiene hijos: %d\n" , lo_size(padre->hijos));
+        printf("Padre %c - Hijo: %c\n" , padre->rotulo, ((TNodo)(lo_primera(padre->hijos)->elemento))->rotulo);
+     }
+    */
     if(lo_size(hijos)>0){
 
         hijoActual=lo_primera(hijos);
@@ -94,11 +98,17 @@ int tr_pertenece_auxiliar(TNodo padre, char* s,int longitud, TTrie tr){
 
         }
 
-         if(*aux==padre->rotulo && longitud>1){
+         if(*aux==padre->rotulo && longitud>0){
             aux++;
+            //printf("Rotulo del padre: %c  - *aux: %c \n" , padre->rotulo , *aux);
             nodoHijo=tr_recuperarHijo_auxiliar(padre,aux);
-                if(nodoHijo!=NULL) //Se encontro al nodo hijo que tiene el caracter s
+
+                if(nodoHijo!=NULL){ //Se encontro al nodo hijo que tiene el caracter s{
+                    //printf("*aux: %c \n" , *aux);
+
                     resultado=tr_pertenece_auxiliar(nodoHijo,aux,longitud-1,tr);
+
+                }
 
             }
           }
@@ -112,22 +122,23 @@ TNodo tr_buscar_auxiliar(TTrie tr,char* str){
     TNodo nodoActual=tr_recuperarHijo_auxiliar(tr->raiz,str);
     int longitud=strlen(str);
     int parar=0;
+    char* aux=str;
 
-    if(tr_pertenece(tr,str)==TRUE && nodoActual!=NULL){
+    if(tr_pertenece(tr,aux)==TRUE && nodoActual!=NULL){
 
         while(parar==0){
 
-            if(longitud==1 && *str==nodoActual->rotulo && nodoActual->contador>0 )
+            if(longitud==1 && *aux==nodoActual->rotulo && nodoActual->contador>0 )
                 parar=1;
             else{
 
                 if (longitud==1)
                     parar=2;
                 else
-                    if(longitud>1 && *str==nodoActual->rotulo){
-                        str++;
+                    if(longitud>1 && *aux==nodoActual->rotulo){
+                        aux++;
                         longitud--;
-                        nodoActual=tr_recuperarHijo_auxiliar(nodoActual,str);
+                        nodoActual=tr_recuperarHijo_auxiliar(nodoActual,aux);
 
                         if(nodoActual==NULL)
                             parar=2;
@@ -169,7 +180,6 @@ int tr_pertenece(TTrie tr, char* str){
     if(primerNodo!=NULL)
         resultado=tr_pertenece_auxiliar(tr->raiz,str,longitud,tr);
 
-
     return resultado;
 }
 
@@ -209,8 +219,9 @@ int tr_insertar(TTrie tr, char* str){
         if(lo_size(hijos)>0){
 
             nodo=tr_recuperarHijo_auxiliar(nodo,aux);
-            hijos=nodo->hijos;
+
             if (nodo!=NULL){
+                hijos=nodo->hijos;
                 if(nodo->contador>0) nodo->contador++;
 
                 while(lo_size(hijos)!=0){
@@ -223,6 +234,11 @@ int tr_insertar(TTrie tr, char* str){
                     }
                 }//fin while
             }
+        }
+
+        if(nodo->contador>0){
+            aux++;
+            longitud--;
         }
 
         //Agrego los nodos faltantes de la palabra.
@@ -244,6 +260,7 @@ int tr_insertar(TTrie tr, char* str){
 
             longitud--;
             hijos=nuevaLista;
+
         }
 
         tr->cantidad_elementos++;
@@ -294,7 +311,7 @@ int tr_eliminar_auxiliar(TNodo nodito,char* str,int longitud){
 		}
 	}
 	else{
-		TNodo hijo=tr_recuperarHijo_auxiliar(nodito,str+1);
+		TNodo hijo=tr_recuperarHijo_auxiliar(nodito,++str);
 		if(hijo==NULL)
 			elimine=-1; //La palabra no se encontró en el trie
 		else{
@@ -336,6 +353,7 @@ int main(){
     f_comp=f_comparador;
     char* p=malloc(sizeof(char));
     char str[200] = {"hola"};
+    char str1[200] = {"holanda"};
     TNodo n1;
 
     printf("<<<<TESTER TRIE>>>>\n");
@@ -379,7 +397,42 @@ int main(){
 
         printf("String: %s \n" , str);
         printf("Recuperar: %d \n" , tr_recuperar(trie,str));
+        printf("Resultado de eliminar: %d \n" , tr_eliminar(trie,str));
 
+    printf("\n");
+    printf("<TRIE CON 2 ELEMENTO, UNO PREFIJO DE OTRO>\n");
+
+        if(tr_insertar(trie,str1)==TRUE)  printf("Insertar funciona con holanda\n");
+        else printf("Insertar no funciona con holanda\n");
+        printf("Size: %d \n" , tr_size(trie));
+
+        printf("Recuperar de hola: %d \n" , tr_recuperar(trie,str));
+        printf("Recuperar de holanda: %d \n" , tr_recuperar(trie,str1));
+
+        if(tr_pertenece(trie,str1)==TRUE)  printf("Pertenece funciona con holanda\n");
+        else printf("Pertenece no funciona\n");
+
+        n1=tr_buscar_auxiliar(trie,str1);
+        if(n1!=NULL) printf("tr_buscar_auxiliar correcto. Elemento: %c , Contador: %d\n" , n1->rotulo ,n1->contador);
+        else printf("tr_buscar_axuliar incorrecto. retorno NULL \n");
+
+    printf("\n");
+    printf("\n");
+    printf("TRIE: ");
+    TNodo point=trie->raiz;
+    while(lo_size(point->hijos)>0){
+        printf(" [%c] " , ((TNodo)(lo_primera(point->hijos)->elemento))->rotulo);
+        point= ((TNodo)(lo_primera(point->hijos)->elemento));
+    }
+
+
+
+
+
+
+    printf("\n");
+    printf("\n");
+    printf("\n");
 
     return 0;
 }
