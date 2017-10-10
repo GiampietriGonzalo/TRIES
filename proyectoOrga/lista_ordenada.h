@@ -22,4 +22,4 @@ TPosicion lo_ultima(TListaOrdenada lista);
 
 TPosicion lo_siguiente(TListaOrdenada lista, TPosicion pos);
 
-#endif // LISTA_ORDENADA_H_INCLUDED
+#endif

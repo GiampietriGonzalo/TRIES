@@ -32,11 +32,11 @@ int l_insertar(TLista lista, TPosicion pos, TElemento elem){
     int r=FALSE;
 
     if(pos==POS_NULA){
-        if(lista->primer_celda!=POS_NULA) /*LISTA NO VACIA*/
-            nueva->proxima_celda = lista->primer_celda;
-            lista->primer_celda=nueva;
-            lista->cantidad_elementos++;
-            r=1;
+        /*LISTA NO VACIA E INSERTAR PRIMERO O VACIA*/
+        nueva->proxima_celda = lista->primer_celda;
+        lista->primer_celda=nueva;
+        lista->cantidad_elementos++;
+        r=TRUE;
     }
     else{
 
@@ -65,16 +65,19 @@ int l_insertar(TLista lista, TPosicion pos, TElemento elem){
 int l_eliminar(TLista lista, TPosicion pos){
 
     int r=FALSE;
-    TCelda aux=lista->primer_celda;
+    TCelda aux;
+    if(lista!=NULL && l_size(lista)>0)
+        aux=lista->primer_celda;
 
     if(pos!=POS_NULA){
-        if(aux==pos)
-            if (lista->cantidad_elementos==1){/*ES LA UNICA CELDA EN LA LISTA.*/
-                lista->primer_celda=POS_NULA;
-            }
-            else{/*ES LA PRIMER CELDA DE LA LISTA, PERO NO LA UNICA.*/
+        if(aux==pos){
+            if (lista->cantidad_elementos!=1){//ES LA PRIMER CELDA DE LA LISTA, PERO NO LA UNICA.
                 lista->primer_celda=aux->proxima_celda;
             }
+            else//Un solo elemento y es pos
+                lista->primer_celda=NULL;
+
+        }
         else{
           /*Pos no es la primer celda*/
           while(aux->proxima_celda!=pos && aux->proxima_celda!=POS_NULA)
@@ -86,7 +89,9 @@ int l_eliminar(TLista lista, TPosicion pos){
         }
         r=TRUE;
 
-        free(pos->elemento);
+        if(pos->elemento!=NULL)
+            free(pos->elemento);
+
         free(pos);
         lista->cantidad_elementos--;
     }
@@ -132,10 +137,11 @@ TPosicion l_siguiente(TLista lista,TPosicion pos){
 
     TPosicion aux=POS_NULA;
 
-    if(pos!=POS_NULA && lista!=NULL){
+    if(pos!=POS_NULA && lista!=NULL && l_size(lista)>0){
         aux=lista->primer_celda;
-        while(aux->proxima_celda!=POS_NULA && aux!=pos)
+        while(aux!=pos && aux->proxima_celda!=POS_NULA)
             aux=aux->proxima_celda;
+        aux=aux->proxima_celda;
     }
 
     return aux;
@@ -159,8 +165,8 @@ TElemento l_recuperar(TLista lista, TPosicion pos){
 
 
 
-int main(){
-    /*
+/*int main(){
+
     printf("<<< TESTER TDALista >>>\n");
     printf("\n");
 
@@ -281,5 +287,5 @@ int main(){
 
     printf("---Recuperar elemento que no es el primero ni ultmo---\n");
     printf("Elemento recuperado de una posicion no nula: %d \n" , *((int*)l_recuperar(lista,aux)));
-    */
-return 0;}
+
+return 0;}*/

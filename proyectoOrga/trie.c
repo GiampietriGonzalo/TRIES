@@ -38,7 +38,7 @@ int (*funcion)(TNodo *, TNodo *)=f;
 
 
 
-TNodo tr_recuperarHijo_auxiliar(TNodo padre, char* s,TTrie tr){
+TNodo tr_recuperarHijo_auxiliar(TNodo padre, char* s){
     /*Buscar y retorna el nodo hijo de un nodo padre pasado por parámetro que tenga como rótulo el primer caracter de s.
     Si no lo encuentra, retorna NULL*/
 
@@ -82,7 +82,7 @@ int tr_pertenece_auxiliar(TNodo padre, char* s,int longitud, TTrie tr){
 
         if(!(*s!=padre->rotulo || (longitud==1 && padre->contador==0) || (*s==padre->rotulo && longitud>1))){
 
-            nodoHijo=tr_recuperarHijo_auxiliar(padre,s,tr);
+            nodoHijo=tr_recuperarHijo_auxiliar(padre,s);
                 if(nodoHijo!=NULL){ //Se encontro al nodo hijo que tiene el caracter s
                     s++;
                     resultado=tr_pertenece_auxiliar(nodoHijo,s,longitud-1,tr);
@@ -96,7 +96,7 @@ int tr_pertenece_auxiliar(TNodo padre, char* s,int longitud, TTrie tr){
 
 TNodo tr_buscar_auxiliar(TTrie tr,char* str){
 
-    TNodo nodoActual=tr_recuperarHijo_auxiliar(tr->raiz,str,tr);
+    TNodo nodoActual=tr_recuperarHijo_auxiliar(tr->raiz,str);
     int longitud=strlen(str);
     int parar=0;
 
@@ -114,7 +114,7 @@ TNodo tr_buscar_auxiliar(TTrie tr,char* str){
                     if(longitud>1 && *str==nodoActual->rotulo){
                         str++;
                         longitud--;
-                        nodoActual=tr_recuperarHijo_auxiliar(nodoActual,str,tr);
+                        nodoActual=tr_recuperarHijo_auxiliar(nodoActual,str);
 
                         if(nodoActual==NULL)
                             parar=2;
@@ -153,7 +153,7 @@ int tr_pertenece(TTrie tr, char* str){
     int resultado;
 
     //Busco al hijo de la raiz que contenga el primer caracter de la palabra pasada.
-    TNodo primerNodo=tr_recuperarHijo_auxiliar(tr->raiz,str,tr);
+    TNodo primerNodo=tr_recuperarHijo_auxiliar(tr->raiz,str);
 
     if(primerNodo!=NULL)
         resultado=tr_pertenece_auxiliar(tr->raiz,str,longitud,tr);
@@ -196,7 +196,7 @@ int tr_insertar(TTrie tr, char* str){
 
         if(lo_size(hijos)!=0){
 
-            nodo=tr_recuperarHijo_auxiliar(nodo,aux,tr);
+            nodo=tr_recuperarHijo_auxiliar(nodo,aux);
             hijos=nodo->hijos;
             if (nodo!=NULL){
                 if(nodo->contador>0) nodo->contador++;
@@ -204,7 +204,7 @@ int tr_insertar(TTrie tr, char* str){
                 while(lo_size(hijos)!=0){
                     aux++;
                     longitud--;
-                    nodo=tr_recuperarHijo_auxiliar(nodo,aux,tr);
+                    nodo=tr_recuperarHijo_auxiliar(nodo,aux);
                     if (nodo!=NULL){
                         hijos=nodo->hijos;
                         if(nodo->contador>0) nodo->contador++;
