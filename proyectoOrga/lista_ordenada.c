@@ -89,6 +89,7 @@ TPosicion lo_siguiente(TListaOrdenada lista, TPosicion pos){
 	return l_siguiente(lista->lista,pos);
 }
 
+/*
 int main(){
 
 
@@ -268,4 +269,4 @@ int main(){
 
     return 0;
 }
-
+*/
