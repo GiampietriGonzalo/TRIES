@@ -237,3 +237,67 @@ int tr_insertar(TTrie tr, char* str){
 
 int tr_size(TTrie tr){return tr->cantidad_elementos;}
 
+int tr_eliminar(TTrie tr,char* str){
+	
+	int resultado=FALSE;
+	int longitud(strlen(str);
+	int elimine;
+	TNodo primero=tr_recuperarHijo_auxiliar(tr->raiz,str,tr);
+	if(primero!=NULL){
+		elimine=eliminarAuxiliar(primero,str,longitud);
+		if(elimine!=-1)
+			resultado=TRUE;
+	}
+	return resultado;
+}
+
+int eliminarAuxiliar(TNodo nodito,char* str,int longitud){
+	int elimine;
+	/*Entero para indicar que tipo de eliminacion se realizo
+		-1 no se realizo eliminacion
+		0 se "elimino" la palabra pero no los nodos porque la palabra era prefijo de otra
+		1 la palabra se elimino y tambien todos los nodos que la componian
+	*/
+	if(longitud==1){
+		if(nodito->contador>0){
+			if(nodito->hijos->cantidad_elementos==0){
+				TPosicion pos=lo_recuperar(nodito->padre->hijos,nodito);
+				free(nodito->hijos);
+				lo_eliminar(nodito->padre->hijos,pos);
+				free(nodito);
+				elimine=1;
+				//Se eliminan los nodos
+			}
+			else{
+				nodito->contador--;
+				elimine=0;
+				//No se eliminan los nodos porque la palabra es prefijo de otra
+			}
+		}
+		else{
+			elimine=-1;
+			//la palabra se encontro pero no pertenece al trie, no se puede eliminar
+		}
+	}
+	else{
+		TNodo hijo=tr_recuperarHijo_auxiliar(nodito,str+1,tr);
+		if(hijo==NULL)
+			elimine=-1; //La palabra no se encontró en el trie
+		else{
+			elimine=eliminarAuxiliar(hijo,str+1,longitud--);
+			if(elimine==1){
+				if(nodito->hijos->cantidad_elementos==0){
+					TPosicion pos=lo_recuperar(nodito->padre->hijos,nodito);
+					free(nodito->hijos);
+					lo_eliminar(nodito->padre->hijos,pos);
+					free(nodito);
+				}
+				else{
+					//el nodo actual es prefijo de otra palabra, no lo elimino
+					eliminar=0;
+				}
+			}
+		}
+	}
+	return elimine;
+}
