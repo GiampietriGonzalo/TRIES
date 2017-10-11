@@ -38,4 +38,4 @@ TElemento l_recuperar(TLista lista, TPosicion pos);
 
 
 
-#endif // lista_h
+#endif
