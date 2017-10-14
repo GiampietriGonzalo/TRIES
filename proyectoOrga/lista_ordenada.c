@@ -30,7 +30,7 @@ TListaOrdenada crear_lista_ordenada(int (*f)(void *,void *)){
 
 int lo_insertar(TListaOrdenada lista, TElemento elem){
 
-    int res=0;
+    int res=FALSE;
     int tr=LST_NO_INI;
     TCelda p=POS_NULA;
     TCelda nuevo;
@@ -38,7 +38,7 @@ int lo_insertar(TListaOrdenada lista, TElemento elem){
 
     if(lista!=NULL){
         p=lo_primera(lista);
-
+				printf("elemento de esta posicion %c " , *((char *)(p->elemento)))
         if(p!=POS_NULA){ //La lista pasada tiene al menos un elemento
             res= comparador(p->elemento,elem);
             if(res!=1){ //p->elemento <= elem

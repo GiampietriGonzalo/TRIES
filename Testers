@@ -468,3 +468,101 @@ int main(char *argv[]) {
 	
 	return 0;
 }
+
+
+//VER
+malloc(sizeof(STRUCT TNodo));
+
+
+
+//tr_insertar original
+
+
+int tr_insertar(TTrie tr, char* str){
+
+    int resultado=FALSE;
+    TNodo nodo,nuevo;
+    TListaOrdenada hijos;
+    char* aux=str;
+    int longitud=strlen(str);
+    TListaOrdenada nuevaLista;
+
+    if(longitud>0 && tr_pertenece(tr,aux)==TRUE){
+        //LA PALABRA YA SE ENCUENTRA EN EL TRIE
+        nodo=tr_buscar_auxiliar(tr,aux);
+        if(nodo!=NULL){
+            nodo->contador++;
+            resultado=TRUE;
+            tr->cantidad_elementos++;
+        }
+    }
+    else
+      if(longitud>0){
+        nodo=tr->raiz;
+        hijos=nodo->hijos;
+
+        if(lo_size(hijos)>0){
+
+            nodo=tr_recuperarHijo_auxiliar(nodo,aux);
+					
+            if (nodo!=NULL){
+                hijos=nodo->hijos;
+                if(nodo->contador>0) nodo->contador++;
+
+                while(longitud > 0 && lo_size(hijos)!=0){
+                    aux++;
+										longitud--;					
+									
+                    nodo=tr_recuperarHijo_auxiliar(nodo,aux);
+										
+									
+                    if (nodo!=NULL){
+                        hijos=nodo->hijos;
+                        if(nodo->contador>0) nodo->contador++;
+                    }
+									
+										if(nodo!=NULL && longitud==1)
+												nodo->contador++;	
+										
+                }//fin while
+            }
+        }
+				
+				
+				printf("longitud: %d \n", longitud);
+	
+        if(nodo!=NULL && nodo->contador>0 && longitud>0){
+            aux++;
+            longitud--;
+        }
+
+        //Agrego los nodos faltantes de la palabra.
+        while(longitud>0){
+
+            nuevo=malloc(sizeof(TNodo));
+            nuevaLista=crear_lista_ordenada(f_comp);
+            nuevo->hijos=nuevaLista;
+            nuevo->rotulo=*aux;
+            nuevo->padre=nodo;
+            if(longitud==1)
+                nuevo->contador=1;
+            else
+                nuevo->contador=0;
+
+            lo_insertar(hijos,nuevo);
+
+            aux++;
+
+            longitud--;
+						nodo=nuevo;
+            hijos=nuevaLista;
+						
+
+        }
+
+        tr->cantidad_elementos++;
+        resultado=TRUE;
+    }
+    return resultado;
+}
+
