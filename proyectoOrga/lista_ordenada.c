@@ -19,7 +19,7 @@ int (*comparador)(void *, void *);
 
 TListaOrdenada crear_lista_ordenada(int (*f)(void *,void *)){
     comparador=f;
-    TListaOrdenada l=malloc(sizeof(TListaOrdenada));
+    TListaOrdenada l=malloc(sizeof(struct lista_ordenada));
     TLista miLista=crear_lista();
     l->lista=miLista;
     l->cantidad_elementos=0;
@@ -54,7 +54,7 @@ int lo_insertar(TListaOrdenada lista, TElemento elem){
 
         if(p!=POS_NULA && p->proxima_celda==POS_NULA && comparador(p->elemento,elem)==-1){
 
-            nuevo=malloc((sizeof(TCelda)));
+            nuevo=malloc((sizeof(struct celda)));
             nuevo->elemento=elem;
             nuevo->proxima_celda=NULL;
             l_ultima(lista->lista)->proxima_celda=nuevo;

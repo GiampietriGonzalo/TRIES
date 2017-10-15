@@ -207,8 +207,8 @@ int tr_eliminar_auxiliar(TTrie tr, TNodo ultimo){
 
 TTrie crear_trie(){
 
-    TTrie tri= malloc(sizeof(TTrie));
-    TNodo node= malloc(sizeof(TNodo));
+    TTrie tri= malloc(sizeof(struct trie));
+    TNodo node= malloc(sizeof(struct nodo));
     node->hijos=crear_lista_ordenada(f_comp);
     tri->raiz=node;
     tri->cantidad_elementos=0;
@@ -340,7 +340,7 @@ int tr_insertar(TTrie tr, char* str){
 int tr_size(TTrie tr){return tr->cantidad_elementos;}
 
 
-int tr_eliminar(TTrie tr,char* str){
+int tr_eliminar(TTrie tr,char* str){ //HACER LOS FREE CORRESPONDIENTES
 
 	int resultado=FALSE;
 	TNodo ultimo=NULL;
