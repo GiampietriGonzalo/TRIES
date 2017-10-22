@@ -282,7 +282,6 @@ int tr_insertar(TTrie tr, char* str){
 		}
 		else{
 			//CASO 1, 1A O 1B
-			
 			if(longitud>0){
 				
 				padre=tr->raiz;
@@ -322,7 +321,7 @@ int tr_insertar(TTrie tr, char* str){
 				if(nodo==NULL){ //CASO 1 
 			
 					while(longitud>0){
-
+						
 						nuevo=malloc(sizeof(struct nodo));
   	      	nuevaLista=crear_lista_ordenada(f_comp);
     	    	nuevo->hijos=nuevaLista;
@@ -335,7 +334,7 @@ int tr_insertar(TTrie tr, char* str){
           		  nuevo->contador=1;
         		else
 							nuevo->contador=0;
-						
+					
         		lo_insertar(hijos,nuevo); 
 						
 						
@@ -374,7 +373,7 @@ int tr_eliminar(TTrie tr,char* str){
 	return resultado;
 }
 
-
+/*
 int main(){
 
     f_comp=f_comparador;
@@ -668,11 +667,38 @@ int main(){
 	
 		printf("\n");
     printf("\n");
+    printf("<<TEST DE ORDEN HIJOS>>\n");
+		printf("\n");
+		
+			char s3[]={"benito"};
+			char s1[]={"ayuda"};
+			char s4[]={"carlitos"};
+			char s5[]={"diegito"};
+			char s2[]={"ayudame"};
+		
+			tr_insertar(trie,s1);
+			tr_insertar(trie,s2);
+			tr_insertar(trie,s3);
+			tr_insertar(trie,s4);
+			tr_insertar(trie,s5);
+		
+			TListaOrdenada hijos = trie->raiz->hijos;
+			int size=lo_size(hijos);
+			TPosicion pu = lo_primera(hijos);
+	
+			while(size>0){
+				printf(" [%c] " , ((TNodo)(pu->elemento))->rotulo);
+				pu=lo_siguiente(hijos,pu);
+				size--;
+			}
+		
+		printf("\n");
+    printf("\n");
 	
     return 0;
 }
 
-
+*/
 
 
 

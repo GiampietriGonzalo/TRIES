@@ -39,7 +39,9 @@ int lo_insertar(TListaOrdenada lista, TElemento elem){
     if(lista!=NULL){
         p=lo_primera(lista);
         if(p!=POS_NULA){ //La lista pasada tiene al menos un elemento
+				
             res= comparador(p->elemento,elem);
+					
             if(res!=1){ //p->elemento <= elem
                 if(p->proxima_celda!=POS_NULA){ /*La lista pasada tiene más de un elemento.
                     Recorro con p y comparo con su siguiente hasta hallar un elemento mayor a elem*/
