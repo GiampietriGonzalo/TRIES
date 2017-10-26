@@ -1,6 +1,6 @@
 #ifndef TRIE_H_INCLUDED
 #define TRIE_H_INCLUDED
-#include "lista_ordenada.c"
+#include "lista_ordenada.h"
 
 
 typedef struct nodo{
