@@ -2,17 +2,37 @@
 #include <stdlib.h>
 #include <string.h>
 //#include "lista_ordenada.c"
-#include "trie.c"
+#include "trie.c" //??
 #define FALSE 0
 #define TRUE 1
 
 
-//IMPLEMENTACIÓN INCOMPLETA :( - LAS POCAS FUNCIONES IMPLEMENTADAS NO ESTAN TESTEADAS
-
 int (* f_comp)(void *, void *);
+int (* f_str)(void *, void *);
 
 
 //FUNCIONES AUXILIARES
+
+int f_compstring(void *v1, void *v2){
+
+  
+    char * c1=(char *)v1;
+		char * c2=(char *)v2;
+   	int res=strcmp(c1,c2);
+    return res;
+}
+
+void vaciar(char *c){
+	
+	while(*c!='\0'){
+		*c='\0';
+		c++;
+	}
+		
+}
+
+
+
 
 TNodo ev_buscar_auxiliar(TTrie tr,char* str){
     //Busca y retorna el nodo que contiene el ultimo caracter de str, si la palabra está en el trie.
@@ -52,13 +72,87 @@ TNodo ev_buscar_auxiliar(TTrie tr,char* str){
     return nodoActual;
 }
 
+void imprimir(TTrie tr , char *c){
+
+	int longitud= strlen(c);
+	TNodo ultimo=ev_buscar_auxiliar(tr,c);
+
+	while(longitud>0 && *c!='\0'){
+		
+		printf("%c" , *c);
+		if(longitud==1)
+			printf("    (%d)" ,ultimo->contador);
+		
+		c++;
+		longitud--;
+	}
+	
+	printf("\n");
+}
+
+void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
+	
+
+	TPosicion hijo;
+	char rotulo[2];
+	char * auxchar = malloc(sizeof(char));
+	char auxiliar[70]={""};
+	
+	rotulo[0] = nodo->rotulo;
+	buffer=strcat(buffer,rotulo);
+	int n=0;
+	
+	
+
+	if (nodo->contador > 0){	
+		
+		imprimir(tr,buffer);
+	
+		if(lo_size(nodo->padre->hijos) > 1 && lo_size(nodo->hijos)==0)
+			buffer[strlen(buffer) - 1]='\0';
+	}
+		
+	
+	if (lo_size(nodo->hijos) > 0){
+		
+			hijo=lo_primera(nodo->hijos);
+			
+			while(hijo!=NULL){
+				
+				//Copia el contenido de buffer[] en auxiliar[]
+				auxchar=buffer;
+				n=0;
+				while(*auxchar!='\0'){
+					auxiliar[n]=*auxchar;
+					n++;
+					auxchar++;
+				}	
+				
+				ev_mostrar_auxiliar(tr,auxiliar,hijo->elemento);
+				hijo=lo_siguiente(nodo->hijos,hijo);
+			
+				if(lo_size(nodo->hijos)>1)
+					auxiliar[strlen(auxiliar) - 1]='\0';
+			}		
+	}
+	
+}
+
 
 //FUNCIONES DE EVALUADOR
 
 void mostrarPalabras(TTrie tr){
 	
+	char buffer[50]={""};
+	TPosicion hijo=lo_primera(tr->raiz->hijos);
 	
+	while(hijo!=NULL){
 	
+		vaciar(buffer);
+		ev_mostrar_auxiliar(tr,buffer,hijo->elemento);
+		hijo=lo_siguiente(tr->raiz->hijos,hijo);
+		
+	}
 }
 
 int consultar(TTrie tr,char* str){
@@ -71,7 +165,7 @@ int consultar(TTrie tr,char* str){
 }
 
 
-int comienzaConAux(TNodo nodito,char c){
+int ev_comienzaCon_auxiliar(TNodo nodito,char c){
 	int cont=0;
 	if(lo_size(nodito->hijos)==0){
 		cont=1;
@@ -81,9 +175,8 @@ int comienzaConAux(TNodo nodito,char c){
 			cont+=1;
 		TPosicion aux=lo_primera(nodito->hijos);
 		while(aux!=NULL){
-			cont+=comienzaConAux(aux->elemento,c);
+			cont+=ev_comienzaCon_auxiliar(aux->elemento,c);
 			aux=lo_siguiente(nodito->hijos,aux);
-			
 		}
 	}
 	return cont;
@@ -91,13 +184,14 @@ int comienzaConAux(TNodo nodito,char c){
 
 int comienzaCon(TTrie tr,char c){
 	//Retorna la cantidad de palabras que comienzan con la letra dada.
+
 	int i=0;
 	char* ch=malloc(sizeof(char));
 	*ch=c;
 	TNodo aux=tr_recuperarHijo_auxiliar(tr->raiz,ch);
 	
 	if(aux!=NULL)
-		i=comienzaConAux(aux,c);
+		i=ev_comienzaCon_auxiliar(aux,c);
 	
 	free(ch);
 	return i;
@@ -119,12 +213,15 @@ int esPrefijo(TTrie tr,char* str){
 }
 
 
-int porcentajePrefijo(TTrie tr,char* str){
+/*int porcentajePrefijo(TTrie tr,char* str){
 	
-}
+}*/
 
 
 int main(char *argv[]) {
+	
+	f_str=f_compstring;
+	
 	
 	f_comp=f_comparador;
 	
@@ -140,19 +237,13 @@ int main(char *argv[]) {
 	else
 		printf("NO se abrio el archivo\n");
 	
-	/*
-	printf("El contenido del archivo de prueba es \n");
-  while((caracter = fgetc(archivo)) != EOF){
-		printf("%c",caracter);
-	}
-	*/
 	printf("\n");
 	
-	caracter = fgetc(archivo);
+	
 	char* puntero;
 	
 	//REIMPLEMENTAR ESTA PARTE PARA QUE SOLO ADMITA CIERTOS CARACTERES
-	
+	caracter = fgetc(archivo);
 	while(seguir==1 && caracter!= EOF){
 		
 		n=0;
@@ -160,7 +251,7 @@ int main(char *argv[]) {
 		puntero=palabra;
 		
 		while(*puntero!='\0'){
-			palabra[n]=NULL;
+			*puntero='\0';
 			puntero++;
 			n++;
 		}	
@@ -168,24 +259,20 @@ int main(char *argv[]) {
 		n=0;
 		
 		while(seguir==1 && caracter!=32){
+
 				palabra[n]=caracter;
 				caracter = fgetc(archivo);
 				n++;
-				//printf("caracter: %c \n" , caracter);
-				if (caracter == EOF || caracter=='\n' || caracter==32){
+
+				if (caracter == EOF || caracter=='\n' || caracter==32)
 						seguir=0;
-						//printf("entro");
-				}
+					
 		}
+		
 		if (caracter==32 && caracter!=EOF){
 				caracter = fgetc(archivo);
-				//printf("palabra: %c , longitd: %d \n" , palabra[0] , strlen(palabra));
-				//printf("caracter int: %d \n" , caracter);
 				seguir=1;
 		}
-		else
-			if(caracter=='\n')
-				seguir=0;
 		
 		puntero=palabra;
 		
@@ -200,28 +287,33 @@ int main(char *argv[]) {
 		tr_insertar(tr,puntero);
 	
 	}
-	char strho[]={"holanda"};
-	printf("\n");
-	printf("recuperar de holanda: %d" , tr_recuperar(tr,strho));
-	printf("\n");
+
 	
 	int opcion=0;
 	
 		
 	do {
+		
 		printf("1.Mostrar palabras\n");
 		printf("2.Consultar\n");
 		printf("3.Comienza con\n");
 		printf("4.Es prefijo\n");
 		printf("5.Porcentaje prefijo\n");
 		printf("6.Salir\n");
+		
 		scanf("%d",&opcion);
 		printf("\n");
+		
 		switch(opcion) {
 				
-		case 1:
+		case 1:{
 			
+			printf("palabras (apariciones)\n" );
+			printf("\n");
+			mostrarPalabras(tr);
+			printf("\n");
 			break;
+		}
 		
 		case 2:{
 			printf("Ingrese la palabra a consultar: \n");
@@ -257,16 +349,21 @@ int main(char *argv[]) {
 			else printf("La palabra no es prefijo de ninguna plabra, o no se encuentra en el archivo\n");
 			break;
 		}
+		
 		case 5:
 			
 			break;
+		
 		case 6:
 				
 			exit(0);
-			break;
+			
 		}
 	
 	} while(opcion!=6);
 	
+	
 	return 0;
 }
+
+

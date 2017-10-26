@@ -25,6 +25,9 @@ TLista crear_lista(){
 
 int l_insertar(TLista lista, TPosicion pos, TElemento elem){
 
+		if(lista==NULL)
+				exit(LST_NO_INI);
+	
     TCelda nueva=malloc(sizeof(struct celda));
     nueva->elemento=elem;
     nueva->proxima_celda=NULL;
@@ -64,9 +67,12 @@ int l_insertar(TLista lista, TPosicion pos, TElemento elem){
 
 int l_eliminar(TLista lista, TPosicion pos){
 
+		if(lista==NULL)
+				exit(LST_NO_INI);
+	
     int r=FALSE;
     TCelda aux;
-    if(lista!=NULL && l_size(lista)>0)
+    if(lista!=NULL && lista->cantidad_elementos>0)
         aux=lista->primer_celda;
 
     if(pos!=POS_NULA){
@@ -102,13 +108,19 @@ int l_eliminar(TLista lista, TPosicion pos){
 }
 
 TPosicion l_primera(TLista lista){
-    TPosicion r=POS_NULA;
-    if(lista->cantidad_elementos!=0)
+    
+	TPosicion r=POS_NULA;
+   
+	if(lista->cantidad_elementos>0)
         r=lista->primer_celda;
     return r;
 }
 
 TPosicion l_ultima(TLista lista){
+	
+		if(lista==NULL)
+				exit(LST_NO_INI);
+	
     TPosicion r=POS_NULA;
     if(lista->cantidad_elementos!=0){
         TCelda aux=lista->primer_celda;
@@ -120,10 +132,19 @@ TPosicion l_ultima(TLista lista){
     return r;
 }
 
-int l_size(TLista lista){return lista->cantidad_elementos;}
+int l_size(TLista lista){
+	
+	if(lista==NULL)
+				exit(LST_NO_INI);
+	
+	return lista->cantidad_elementos;
+}
 
 TPosicion l_anterior(TLista lista, TPosicion pos){
-
+	
+		if(lista==NULL)
+				exit(LST_NO_INI);	
+	
     TPosicion aux=POS_NULA;
     if(lista->primer_celda!=pos && pos!=POS_NULA){
         aux=lista->primer_celda;
@@ -134,10 +155,13 @@ TPosicion l_anterior(TLista lista, TPosicion pos){
 }
 
 TPosicion l_siguiente(TLista lista,TPosicion pos){
-
+		
+		if(lista==NULL)
+				exit(LST_NO_INI);
+	
     TPosicion aux=POS_NULA;
 
-    if(pos!=POS_NULA && lista!=NULL && l_size(lista)>0){
+    if(pos!=POS_NULA && lista!=NULL && lista->cantidad_elementos>0){
         aux=lista->primer_celda;
         while(aux!=pos && aux->proxima_celda!=POS_NULA)
             aux=aux->proxima_celda;
@@ -148,7 +172,10 @@ TPosicion l_siguiente(TLista lista,TPosicion pos){
 }
 
 TElemento l_recuperar(TLista lista, TPosicion pos){
-
+		
+		if(lista==NULL)
+				exit(LST_NO_INI);
+	
     TElemento tr=ELE_NULO;
     TCelda aux;
 
@@ -162,4 +189,144 @@ TElemento l_recuperar(TLista lista, TPosicion pos){
     }
     return tr;
 }
+/*
+int main(){
+
+    printf("<<< TESTER TDALista >>>\n");
+    printf("\n");
+
+
+    int r=0,i=9;
+    TLista lista= malloc(sizeof(TLista));
+    lista=crear_lista();
+    int* n=malloc(sizeof(int));
+    TElemento elem=malloc(sizeof(int));
+    *n=77;
+    elem=n;
+    TPosicion pos;
+    TCelda aux;
+
+    TElemento n1= malloc(sizeof(int));
+    TElemento n2= malloc(sizeof(int));
+    TElemento n3= malloc(sizeof(int));
+    TElemento n4= malloc(sizeof(int));
+    TElemento n5= malloc(sizeof(int));
+    TElemento n6= malloc(sizeof(int));
+    TElemento n7= malloc(sizeof(int));
+    int* i1=malloc(sizeof(int));
+    int* i2=malloc(sizeof(int));
+    int* i3=malloc(sizeof(int));
+    int* i4=malloc(sizeof(int));
+    int* i5=malloc(sizeof(int));
+    int* i6=malloc(sizeof(int));
+    int* i7=malloc(sizeof(int));
+    *i1=6; *i2=7; *i3=8; *i4=9;
+    n1=i1; n2=i2; n3=i3; n4=i4;
+
+    *i5=2; *i6=88; *i7=77;
+    n5=i5; n6=i6; n7=i7;
+
+
+    printf("---Insertar---\n");
+    r=l_insertar(lista,NULL,n5); //2
+    printf("Resultado de insertar: %d \n" , r);
+    printf("Elemento insertado: %d \n" , *(((int*)lista->primer_celda->elemento)));
+    printf("Cantidad de elementos de la lista: %d \n",lista->cantidad_elementos);
+
+    printf("\n");
+		//2-
+    printf("Inserción de otro elemento\n");
+
+    r=l_insertar(lista,lista->primer_celda,n6); //88
+    printf("Resultado de insertar: %d \n" , r);
+    printf("Elemento insertado: %d \n" , *(((int*)lista->primer_celda->elemento)));
+    printf("Cantidad de elementos de la lista: %d \n",lista->cantidad_elementos);
+
+    printf("\n");
+		//88-2
+    printf("Inserción de otro elemento\n");
+
+    r=l_insertar(lista,lista->primer_celda->proxima_celda,n7); //77
+    printf("Resultado de insertar: %d \n" , r);
+    printf("Elemento insertado: %d \n" ,  *((int*)(lista->primer_celda->proxima_celda->elemento)));
+    printf("Cantidad de elementos de la lista: %d \n",lista->cantidad_elementos);
+		
+    //LISTA HASTA AHORA 88-77-2
+    printf("\n");
+
+    printf("---Eliminar---\n");
+    pos=lista->primer_celda->proxima_celda->proxima_celda; //2
+    printf("Elemento eliminado: %d \n",*((int*)pos->elemento));
+    r=l_eliminar(lista,pos);
+    printf("Resultado de eliminar con un elemento: %d \n" , r);
+
+    //LISTA HASTA AHORA 88-77
+
+    printf("Se elimina el primer elemento de la lista (88) \n");
+    printf("resultado: %d \n",l_eliminar(lista,l_primera(lista)));
+			
+		printf("\n");
+		
+		//77
+
+		printf("Se inserta 6-7-8-9\n");
+    l_insertar(lista,NULL,n1);
+    l_insertar(lista,NULL,n2);
+    l_insertar(lista,NULL,n3);
+    l_insertar(lista,NULL,n4);
+    //LISTA HASTA AHORA 9-8-7-6-77
+
+    printf("Lista: ");
+    aux=l_primera(lista);
+    while(aux!=NULL){
+        printf("[%d] ", *((int*)(aux->elemento)));
+        aux=aux->proxima_celda;
+    }
+
+
+    printf("\n");
+    printf("\n");
+
+    printf("---Primera---\n");
+    printf("Elemento de la primera posicion de la lista: %d \n" , *((int*)l_primera(lista)->elemento));
+
+    printf("\n");
+
+    printf("---Ultima---\n");
+    printf("Elemento de la última posicion de la lista: %d \n" , *((int*)l_ultima(lista)->elemento));
+
+    printf("\n");
+
+    printf("---Anterior---\n");
+    r=l_anterior(lista,l_primera(lista));
+    printf("Resultado del Anterior del primer elemento: %d \n" , r);
+    printf("Anterior del último elemento: %d \n" , *((int*)l_anterior(lista,l_ultima(lista))->elemento));
+
+		printf("\n");
+	
+		printf("---Siguiente---\n");
+    r=l_siguiente(lista,l_ultima(lista));
+    printf("Resultado del Siguiente del último elemento: %d \n" , r);
+    printf("Siguiente del primer elemento: %d \n" , *((int*)l_siguiente(lista,l_primera(lista))->elemento));	
+	
+	
+    printf("\n");
+
+    printf("---Recuperar---\n");
+    r=l_recuperar(lista,NULL);
+    printf("Resultado del recuperar el elemento de una posición nula: %d \n" , r);
+    printf("Elemento recuperado de la primer posicion: %d \n" , *((int*)l_recuperar(lista,l_primera(lista))));
+
+    aux=lista->primer_celda->proxima_celda->proxima_celda;
+
+    printf("\n");
+
+    printf("---Recuperar elemento que no es el primero ni ultmo---\n");
+    printf("Elemento recuperado de una posicion no nula: %d \n" , *((int*)l_recuperar(lista,aux)));
+	
+		printf("\n");	
+	
+	return 0;
+}*/
+
 

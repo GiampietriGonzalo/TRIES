@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "trie.h"
-#include "lista_ordenada.h"
-#include "lista_ordenada.c"
+//#include "lista_ordenada.h" TESTAR
+//#include "lista_ordenada.c"
 
 #define POS_NULA NULL
 #define ELE_NULO NULL
@@ -16,7 +16,7 @@
 #define STR_NO_PER -1
 
 
-int (* f_comp)(void *, void *);
+//int (* f_comp)(void *, void *);  TESTEAR
 
 int f_comparador(void* v1, void* v2){
 
@@ -77,7 +77,7 @@ int tr_pertenece_auxiliar(TNodo padre, char* s,int longitud, TTrie tr){
     //función auxiliar y recusivo para la función tr_pertenece.
 	
     TNodo nodoHijo;
-    int resultado=FALSE;
+    int resultado=FALSE; //TESTAR
     char* aux=s;
 
     if(padre->contador > 0 && longitud==1 && *s==padre->rotulo)
@@ -148,7 +148,7 @@ TPosicion tr_recuperarPos_auxiliar(TNodo nodo){
 		//Busca y retona la posicion del nodo en la lista de hijos de su padre.
 		
 		TListaOrdenada hermanos = nodo->padre->hijos; 
-        TPosicion aux;
+    TPosicion aux;
 		aux=lo_primera(hermanos);
     
 		while(aux->elemento!=nodo)
@@ -229,7 +229,7 @@ TTrie crear_trie(){
 
     TTrie tri= malloc(sizeof(struct trie));
     TNodo node= malloc(sizeof(struct nodo));
-    node->hijos=crear_lista_ordenada(f_comp);
+    node->hijos=crear_lista_ordenada(&f_comparador);
     tri->raiz=node;
     tri->cantidad_elementos=0;
 
@@ -240,6 +240,9 @@ TTrie crear_trie(){
 
 int tr_pertenece(TTrie tr, char* str){
 
+		if(tr==NULL)
+			exit(TRI_NO_INI);
+	
     int longitud= strlen(str);
     int resultado=FALSE;
     TNodo primerNodo=tr_recuperarHijo_auxiliar(tr->raiz,str);
@@ -252,6 +255,9 @@ int tr_pertenece(TTrie tr, char* str){
 
 int tr_recuperar(TTrie tr, char* str){
 
+		if(tr==NULL)
+			exit(TRI_NO_INI);
+	
     int resultado= STR_NO_PER;
     TNodo nodo=tr_buscar_auxiliar(tr,str);
     if (nodo!=NULL)
@@ -267,6 +273,10 @@ int tr_insertar(TTrie tr, char* str){
 		CASO 1B: Se ingresa una palabra que es prefija de otra palabra ya ingresada en el TRIE. (ejemplo: se ingresa hola y ya está holanda).
 		CASO 2: Se ingresa una palabra que ya se encuentra en el TRIE.		
 		*/
+		
+		if(tr==NULL)
+			exit(TRI_NO_INI);
+	
 		char* aux=str;
 		TNodo nuevo,nodo,padre;
 		int resultado=FALSE;
@@ -323,7 +333,7 @@ int tr_insertar(TTrie tr, char* str){
 					while(longitud>0){
 						
 						nuevo=malloc(sizeof(struct nodo));
-  	      	nuevaLista=crear_lista_ordenada(f_comp);
+  	      	nuevaLista=crear_lista_ordenada(f_comparador);
     	    	nuevo->hijos=nuevaLista;
       	  	nuevo->rotulo=*aux;
         		nuevo->padre=padre;
@@ -359,6 +369,10 @@ int tr_size(TTrie tr){return tr->cantidad_elementos;}
 
 int tr_eliminar(TTrie tr,char* str){
 
+	if(tr==NULL)
+			exit(TRI_NO_INI);
+	
+	
 	int resultado=FALSE;
 	TNodo ultimo=NULL;
 	
@@ -376,7 +390,7 @@ int tr_eliminar(TTrie tr,char* str){
 /*
 int main(){
 
-    f_comp=f_comparador;
+    //f_comp=f_comparador;
     char* p=malloc(sizeof(char));
     char str[200] = {"hola"};
     char str1[200] = {"holanda"};
@@ -391,7 +405,7 @@ int main(){
         trie->cantidad_elementos=0;
         TNodo root= malloc(sizeof(struct nodo));
         root->contador=0;
-        TListaOrdenada lista_hijos=crear_lista_ordenada(f_comp);
+        TListaOrdenada lista_hijos=crear_lista_ordenada(f_comparador);
         root->hijos=lista_hijos;
         root->padre=NULL;
         trie->raiz=root;
@@ -431,7 +445,7 @@ int main(){
     printf("\n");
     printf("\n");
 
-        if(tr_pertenece(trie,str)==TRUE)  printf("hola no pertenece al Trie en éste punto \n");
+        if(tr_pertenece(trie,str)==TRUE)  printf("hola pertenece al Trie en éste punto \n");
         else printf("Pertenece no funciona con hola\n");
 
         n1=tr_buscar_auxiliar(trie,str);
@@ -443,6 +457,7 @@ int main(){
 				printf("<<SE ELIMINA <hola> >>>\n");
         printf("Resultado de eliminar: %d \n" , tr_eliminar(trie,str));
 				printf("Size: %d \n" , tr_size(trie));
+				printf("Resultado de recuperar: %d (-1 = correcto) \n" , tr_recuperar(trie,str));
 	
     printf("\n");
     printf("<TRIE CON 2 ELEMENTO, UNO PREFIJO DE OTRO>\n");
@@ -667,7 +682,7 @@ int main(){
 	
 		printf("\n");
     printf("\n");
-    printf("<<TEST DE ORDEN HIJOS>>\n");
+    printf("<<TEST DE ORDEN HIJOS>> con otros elementos \n");
 		printf("\n");
 		
 			char s3[]={"benito"};
@@ -699,7 +714,6 @@ int main(){
 }
 
 */
-
 
 
 

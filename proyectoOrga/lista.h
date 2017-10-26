@@ -15,12 +15,10 @@ typedef struct lista {
 } * TLista;
 
 
-TLista crear_lista();
+
 int l_insertar(TLista lista, TPosicion pos, TElemento elem);
 
 TLista crear_lista();
-
-int l_insertar(TLista lista, TPosicion pos, TElemento elem);
 
 int l_eliminar(TLista lista, TPosicion pos);
 
