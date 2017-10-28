@@ -3,7 +3,6 @@
 #include <string.h>
 #include "trie.h"
 //#include "lista_ordenada.h" TESTAR
-#include "lista_ordenada.c"
 
 #define POS_NULA NULL
 #define ELE_NULO NULL

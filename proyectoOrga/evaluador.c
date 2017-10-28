@@ -32,12 +32,44 @@ void vaciar(char *c){
 }
 
 
+TNodo ev_recuperarHijo_auxiliar(TNodo padre, char* s){
+    /*Buscar y retorna el nodo hijo de un nodo padre pasado por parámetro que tenga como rótulo el primer caracter de s.
+    Si no lo encuentra, retorna NULL*/
+
+    TListaOrdenada hijos;
+    TPosicion hijoActual;
+    TNodo nodoHijo=NULL;
+    int salir=0;
+
+    hijos=padre->hijos;
+
+    if(lo_size(hijos)>0){
+
+        hijoActual=lo_primera(hijos);
+        nodoHijo=hijoActual->elemento;
+
+        while(salir==0 && *s!=nodoHijo->rotulo){
+            //Recorro la lista de hijos hasta hallar el nodo que contiene al caracter apuntado por s
+            hijoActual=lo_siguiente(hijos,hijoActual);
+
+            if(hijoActual==NULL)
+                salir=1;
+            else
+                nodoHijo=hijoActual->elemento;
+        }
+
+        if(salir==1) nodoHijo=NULL; //No se encontró al nodo hijo que tiene el caracter s
+    }
+
+    return nodoHijo;
+}
+
 
 
 TNodo ev_buscar_auxiliar(TTrie tr,char* str){
     //Busca y retorna el nodo que contiene el ultimo caracter de str, si la palabra está en el trie.
     //Si no lo encuentra retorna NULL
-    TNodo nodoActual=tr_recuperarHijo_auxiliar(tr->raiz,str);
+    TNodo nodoActual=ev_recuperarHijo_auxiliar(tr->raiz,str);
     int longitud=strlen(str);
     int parar=0;
     char* aux=str;
@@ -56,7 +88,7 @@ TNodo ev_buscar_auxiliar(TTrie tr,char* str){
                     if(longitud>1 && *aux==nodoActual->rotulo){
                         aux++;
                         longitud--;
-                        nodoActual=tr_recuperarHijo_auxiliar(nodoActual,aux);
+                        nodoActual=ev_recuperarHijo_auxiliar(nodoActual,aux);
 
                         if(nodoActual==NULL)
                             parar=2;
@@ -139,6 +171,7 @@ void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
 }
 
 
+
 //FUNCIONES DE EVALUADOR
 
 void mostrarPalabras(TTrie tr){
@@ -166,18 +199,23 @@ int consultar(TTrie tr,char* str){
 
 
 int ev_comienzaCon_auxiliar(TNodo nodito,char c){
+	
 	int cont=0;
-	if(lo_size(nodito->hijos)==0){
+	
+	if(lo_size(nodito->hijos)==0)
 		cont=1;
-	}
 	else{
+		
 		if(nodito->contador>0) 
 			cont+=1;
+		
 		TPosicion aux=lo_primera(nodito->hijos);
+		
 		while(aux!=NULL){
 			cont+=ev_comienzaCon_auxiliar(aux->elemento,c);
 			aux=lo_siguiente(nodito->hijos,aux);
 		}
+	
 	}
 	return cont;
 }
@@ -188,7 +226,7 @@ int comienzaCon(TTrie tr,char c){
 	int i=0;
 	char* ch=malloc(sizeof(char));
 	*ch=c;
-	TNodo aux=tr_recuperarHijo_auxiliar(tr->raiz,ch);
+	TNodo aux=ev_recuperarHijo_auxiliar(tr->raiz,ch);
 	
 	if(aux!=NULL)
 		i=ev_comienzaCon_auxiliar(aux,c);
@@ -213,12 +251,34 @@ int esPrefijo(TTrie tr,char* str){
 }
 
 
-/*int porcentajePrefijo(TTrie tr,char* str){
-	
-}*/
+int cant_prefijos_auxiliar(TNodo nodo){
+
+    int cont=nodo->contador;
+    TPosicion aux;
+    if(lo_size(nodo->hijos)>0){
+        aux=lo_primera(nodo->hijos);
+
+        while(aux!=NULL){
+            cont+=cant_prefijos_auxiliar((TNodo)aux->elemento);
+            aux=lo_siguiente(nodo->hijos,aux);
+        }
+    }
+
+    return cont;
+
+}
 
 
-int main(char *argv[]) {
+int porcentajePrefijo(TTrie tr,char* str){
+
+    TNodo nodo=ev_buscar_auxiliar(tr,str);
+    int cont=cant_prefijos_auxiliar(nodo);
+
+    return (cont*100)/tr_size(tr);
+
+}
+
+int main(int i, char *argv[])  { //?
 	
 	f_str=f_compstring;
 	
@@ -350,19 +410,30 @@ int main(char *argv[]) {
 			break;
 		}
 		
-		case 5:
-			
-			break;
+		case 5:{
 		
-		case 6:
-				
-			exit(0);
-			
+			printf("Ingrese el prefijo a consultar: ");
+			char s[50];
+			scanf("\n%s",s);
+      int k=porcentajePrefijo(tr,s);
+      printf("La palabra es prefijo del %d porciento de las palabras en el archivo\n" , k);
+      break;
+		
 		}
-	
+				
+		
+		case 6: {fclose(archivo); exit(0); }
+
+		default: {fclose(archivo); exit(0);}
+
+        }
+
+
+
 	} while(opcion!=6);
-	
-	
+
+    fclose(archivo);
+
 	return 0;
 }
 
