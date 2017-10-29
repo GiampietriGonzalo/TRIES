@@ -1,7 +1,8 @@
 #ifndef TRIE_H_INCLUDED
 #define TRIE_H_INCLUDED
-#include "lista_ordenada.c"
+#include "lista_ordenada.h"
 
+int f_comparador(void* v1, void* v2);
 
 typedef struct nodo{
     char rotulo;
