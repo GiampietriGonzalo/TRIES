@@ -393,15 +393,17 @@ int main(int i, char *argv[])  {
 		}
 
 		case 5:{
-
-			printf("Ingrese el prefijo a consultar: ");
-			char s[50];
-			scanf("\n%s",s);
-            int k=porcentajePrefijo(tr,s);
-            printf("La palabra es prefijo del %d porciento de las palabras en el archivo\n" , k);
-            printf("\n");
-            break;
-
+			if(tr->cantidad_elementos>0){
+				printf("Ingrese el prefijo a consultar: ");
+				char s[50];
+				scanf("\n%s",s);
+            	int k=porcentajePrefijo(tr,s);
+            	printf("La palabra es prefijo del %d porciento de las palabras en el archivo\n" , k);
+            	printf("\n");
+   			}	
+   			
+			else printf("No puedo calcular porcentaje de un archivo vacio");
+			break;
 		}
 
 
