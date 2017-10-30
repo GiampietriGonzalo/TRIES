@@ -268,23 +268,26 @@ int porcentajePrefijo(TTrie tr,char* str){
 int main(int i, char *argv[])  {
 
     if(argv[1]=='\0'){
-        printf("NO SE HA INGRESADO EL NOMBRE DE ARCHIVO\n");
+        printf("< NO SE HA INGRESADO EL NOMBRE DE ARCHIVO >\n");
         exit(0);
     }
 
 	f_comp=f_comparador;
 
 	FILE* archivo=fopen(argv[1],"r+");
+
+	if(archivo==NULL){
+        printf("\n");
+        printf("< NO ESE HA ENCONTRADO EL ARCHIVO >\n");
+        printf("\n");
+        exit(0);
+	}
+
 	int caracter;
 	char palabra[50];
 	int n=0;
 	int seguir=1;
 	TTrie tr=crear_trie();
-
-	if(archivo!=NULL)
-		printf("Se abrio el archivo\n");
-	else
-		printf("NO se abrio el archivo\n");
 
 	printf("\n");
 
@@ -337,12 +340,12 @@ int main(int i, char *argv[])  {
 
 	do {
 
-		printf("1.Mostrar palabras\n");
-		printf("2.Consultar\n");
-		printf("3.Comienza con\n");
-		printf("4.Es prefijo\n");
-		printf("5.Porcentaje prefijo\n");
-		printf("6.Salir\n");
+		printf("[1] Mostrar palabras\n");
+		printf("[2] Consultar\n");
+		printf("[3] Comienza con\n");
+		printf("[4] Es prefijo\n");
+		printf("[5] Porcentaje prefijo\n");
+		printf("[6] Salir\n");
 
 		scanf("%d",&opcion);
 		printf("\n");
@@ -387,8 +390,8 @@ int main(int i, char *argv[])  {
 			char s[50];
 			scanf("\n%s",s);
 			int k=esPrefijo(tr,s);
-			if(k==1) printf("La palabra es prefijo de alguna palabra en el archivo\n");
-			else printf("La palabra no es prefijo de ninguna plabra, o no se encuentra en el archivo\n");
+			if(k==1) printf("La palabra es prefijo de al menos una palabra en el archivo\n");
+			else printf("La palabra no es prefijo de ninguna palabra\n");
 			break;
 		}
 
@@ -400,18 +403,21 @@ int main(int i, char *argv[])  {
             	int k=porcentajePrefijo(tr,s);
             	printf("La palabra es prefijo del %d porciento de las palabras en el archivo\n" , k);
             	printf("\n");
-   			}	
-   			
-			else printf("No puedo calcular porcentaje de un archivo vacio");
+   			}
+			else
+                printf("No puedo calcular porcentaje de un archivo vacio");
 			break;
 		}
 
 
 		case 6: {fclose(archivo); exit(0); }
 
-		default: {fclose(archivo); exit(0);}
+		default: {printf("Opcion incorrecta \n");}
+
 
         }
+
+        printf("\n");
 
 
 
