@@ -3,15 +3,39 @@
 #include <string.h>
 #include "lista_ordenada.h"
 #include "trie.h"
+
+#define POS_NULA NULL
+#define ELE_NULO NULL
 #define FALSE 0
 #define TRUE 1
-
-
+#define LST_NO_INI 2
+#define LST_POS_INI 3
+#define LST_VAC 4
+#define TRI_NO_INI 5
+#define STR_NO_PER -1
 int (* f_comp)(void *, void *);
 
 
 
 //FUNCIONES AUXILIARES
+
+void ev_liberar_auxiliar(TTrie tr, TNodo nodo){
+	/*
+		Libera recursivamente los espacios de memoria correspondiente a cada estructura
+	*/
+	TListaOrdenada hijos=nodo->hijos;
+	TPosicion pos=lo_primera(hijos);
+
+	
+	while(pos!=POS_NULA){
+		ev_liberar_auxiliar(tr,pos->elemento);	
+		lo_eliminar(hijos,pos);
+		pos=lo_siguiente(hijos,pos);
+	}
+	
+	free(nodo->hijos);
+
+}
 
 int ev_toLowerCase_auxiliar(int c){
 	//Retorna el entero correspondiente al código ASCII del caracter pasado por parámetro en minúscula
@@ -30,7 +54,7 @@ void ev_vaciar_auxiliar(char c[]){
 }
 
 
-int cant_prefijos_auxiliar(TNodo nodo){
+int ev_porcentaje_auxiliar(TNodo nodo){
 		/*Recorre el trie hacia abajo a través de los hijos del nodo pasado por
 		por parámetro contando la cantidad de palabras de la cual es prefija la palabra
 		que se pasa por parámetro en la función cascar "prefijos"*/
@@ -41,7 +65,7 @@ int cant_prefijos_auxiliar(TNodo nodo){
         aux=lo_primera(nodo->hijos);
 
         while(aux!=NULL){
-            cont+=cant_prefijos_auxiliar((TNodo)aux->elemento);
+            cont+=ev_porcentaje_auxiliar((TNodo)aux->elemento);
             aux=lo_siguiente(nodo->hijos,aux);
         }
     }
@@ -137,7 +161,7 @@ void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
 		palabras que se encuentran en el Trie, para luego imprimirlas.*/
 
 	TPosicion hijo;
-	char * auxchar = malloc(sizeof(char));
+	char * auxchar;
 	char auxiliar[70]={""};
 
 	buffer[strlen(buffer)]=nodo->rotulo;
@@ -181,7 +205,6 @@ void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
 			}
 	}
 
-
 }
 
 int ev_comienzaCon_auxiliar(TNodo nodito,char c){
@@ -212,7 +235,10 @@ int ev_comienzaCon_auxiliar(TNodo nodito,char c){
 //FUNCIONES DE EVALUADOR
 
 void mostrarPalabras(TTrie tr){
-
+	/*
+		permite visualizar el listado de todas las palabras que posee el archivo, 
+		junto con la cantidad de apariciones de la misma.
+	*/
 	char buffer[50]={""};
 	TPosicion hijo=lo_primera(tr->raiz->hijos);
 
@@ -225,6 +251,11 @@ void mostrarPalabras(TTrie tr){
 }
 
 int consultar(TTrie tr,char* str){
+	/*
+	permite determinar si una palabra ingresada pertenece o no al archivo, 
+	y en consecuencia, cuántas veces esta se repite en el archivo.
+	*/
+	
 	int i=tr_pertenece(tr,str);
 	int cant=0;
 	if(i==TRUE)
@@ -253,7 +284,7 @@ int comienzaCon(TTrie tr,char c){
 
 
 int esPrefijo(TTrie tr,char* str){
-	/*Determina y retorna cuántas palabras pertenecientes al Trie tr son posfijas de una palabra pasada por
+	/*Determina si al menos una palabra perteneciente al Trie tr es posfija de una palabra pasada por
 		parámetro que también encuentra en el trie.*/
 	
 	int res=FALSE;
@@ -276,8 +307,16 @@ int porcentajePrefijo(TTrie tr,char* str){
 			pertenecer al Trie tr.*/
     TNodo nodo=ev_buscar_auxiliar(tr,str);
     int cont=0;
-    if(nodo!=NULL)
-        cont=cant_prefijos_auxiliar(nodo);
+		TPosicion aux;
+    
+    if(nodo!=NULL && lo_size(nodo->hijos) > 0){
+    	aux= lo_primera(nodo->hijos);
+			
+			while(aux!=NULL){
+            cont+=ev_porcentaje_auxiliar((TNodo)aux->elemento);
+            aux=lo_siguiente(nodo->hijos,aux);
+        }
+		}
 
     return (cont*100)/tr_size(tr);
 
@@ -306,6 +345,8 @@ int main(int i, char *argv[])  {
 	int n=0;
 	int seguir=TRUE;
 	TTrie tr=crear_trie();
+	TListaOrdenada hijos;
+	TPosicion pos;
 
 
     printf("\n");
@@ -456,8 +497,23 @@ int main(int i, char *argv[])  {
 
 
 		case 6: {
-
-            //FREES ACA
+				
+						//LIBERACION DE MEMORIA
+						if(tr_size(tr)>0){
+							hijos=tr->raiz->hijos;
+							pos=lo_primera(hijos);
+							
+							while(pos!=POS_NULA){
+								ev_liberar_auxiliar(tr,pos->elemento);	
+								lo_eliminar(hijos,pos);
+								pos=lo_siguiente(hijos,pos);
+							}
+		
+						}
+			
+						free(tr->raiz);
+						free(tr);
+						
             fclose(archivo);
             exit(0);
 
@@ -466,12 +522,10 @@ int main(int i, char *argv[])  {
 		default: {printf("[OPCION INCORRECTA]\n");}
 
 
-        }
+   }
 
         printf("\n");
 
-        /*if(opcion<49 || opcion >57)
-            break;*/
 
 
 	} while(opcion!=0);

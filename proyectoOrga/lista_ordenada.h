@@ -1,6 +1,6 @@
 #ifndef LISTA_ORDENADA_H_INCLUDED
 #define LISTA_ORDENADA_H_INCLUDED
-#include "lista.h" //??
+#include "lista.h"
 
 
 typedef struct lista_ordenada {

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "trie.h"
-//#include "lista_ordenada.h" TESTAR
+
 
 #define POS_NULA NULL
 #define ELE_NULO NULL
@@ -15,7 +15,7 @@
 #define STR_NO_PER -1
 
 
-//int (* f_comp)(void *, void *);  TESTEAR
+
 
 int f_comparador(void* v1, void* v2){
 
@@ -106,8 +106,8 @@ int tr_pertenece_auxiliar(TNodo padre, char* s,int longitud, TTrie tr){
 }
 
 TNodo tr_buscar_auxiliar(TTrie tr,char* str){
-    //Busca y retorna el nodo que contiene el ultimo caracter de str, si la palabra está en el trie.
-    //Si no lo encuentra retorna NULL
+    /*Busca y retorna el nodo que contiene el ultimo caracter de str, si la palabra está en el trie.
+   		Si no lo encuentra retorna NULL*/
     TNodo nodoActual=tr_recuperarHijo_auxiliar(tr->raiz,str);
     int longitud=strlen(str);
     int parar=0;
@@ -157,6 +157,7 @@ TPosicion tr_recuperarPos_auxiliar(TNodo nodo){
 }
 
 int tr_eliminar_auxiliar(TTrie tr, TNodo ultimo, int long original , int longitud){
+		
 		/* 
 		Retorna TRUE si se ha eliminado la palabra con exito, FALSE en caso contrario.
 		En el caso de que la palabra esté repetida o sea prefijo de otra, se descuenta 
@@ -222,10 +223,14 @@ int tr_eliminar_auxiliar(TTrie tr, TNodo ultimo, int long original , int longitu
 
 
 
-//FUNCIONES DE trie.h
+//FUNCIONES DE TRIE
 
 TTrie crear_trie(){
-
+		/*
+		Retorna un nuevo trie vacío, esto es, con nodo raíz que mantiene 
+		rótulo nulo y contador en cero.
+		*/
+	
     TTrie tri= malloc(sizeof(struct trie));
     TNodo node= malloc(sizeof(struct nodo));
     node->hijos=crear_lista_ordenada(&f_comparador);
@@ -238,7 +243,11 @@ TTrie crear_trie(){
 
 
 int tr_pertenece(TTrie tr, char* str){
-
+		/*
+		Retorna TRUE el string str pasado pertenece al trie,
+		FALSE en caso contrario.
+		*/
+	
 		if(tr==NULL)
 			exit(TRI_NO_INI);
 	
@@ -253,7 +262,11 @@ int tr_pertenece(TTrie tr, char* str){
 }
 
 int tr_recuperar(TTrie tr, char* str){
-
+		/*
+		Retorna el entero asociado al string str, dentro del trie. 
+		Si el string no pertenece al trie, retorna STR_NO_PER.	
+		*/
+	
 		if(tr==NULL)
 			exit(TRI_NO_INI);
 	
@@ -266,7 +279,13 @@ int tr_recuperar(TTrie tr, char* str){
 }
 
 int tr_insertar(TTrie tr, char* str){
+	
 		/*
+		Inserta el string str al trie, inicializando el valor de contador 
+		asociado en uno. En caso de que el string ya se encuentre en el trie,
+		aumenta el valor del contador asociado a dicho string en una unidad.
+		Retorna TRUEs si la inserción ha sido exitosa, y FALSE en caso contrario.
+		
 		CASO 1: Se ingresa una palabra que no está en el TRIE.
 		CASO 1A: Se ingresa una palabra que tienen un prefijo (ejemplo: se ingresa holanda y está hola).
 		CASO 1B: Se ingresa una palabra que es prefija de otra palabra ya ingresada en el TRIE. (ejemplo: se ingresa hola y ya está holanda).
@@ -363,11 +382,19 @@ int tr_insertar(TTrie tr, char* str){
 }
 
 
-int tr_size(TTrie tr){return tr->cantidad_elementos;}
+int tr_size(TTrie tr){
+	/*
+	Retorna la cantidad de palabras del trie tr.
+	*/
+	return tr->cantidad_elementos;
+}
 
 
 int tr_eliminar(TTrie tr,char* str){
-
+	/*
+	Elimina el string str dentro del trie, liberando la memoria utilizada. 
+	Retorna TRUE en caso de operación exitosa, y FALSE en caso contrario.
+	*/
 	if(tr==NULL)
 			exit(TRI_NO_INI);
 	
@@ -375,9 +402,9 @@ int tr_eliminar(TTrie tr,char* str){
 	int resultado=FALSE;
 	TNodo ultimo=NULL;
 	
-	if(tr_pertenece(tr,str)==TRUE){
+	if(tr_pertenece(tr,str)==TRUE)
 		ultimo=tr_buscar_auxiliar(tr,str);
-	}		
+			
 	if(ultimo!=NULL)
 		resultado=tr_eliminar_auxiliar(tr,ultimo,strlen(str),strlen(str));
 	

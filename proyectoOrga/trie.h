@@ -17,8 +17,6 @@ typedef struct trie{
 }* TTrie;
 
 
-
-
 TTrie crear_trie();
 int tr_insertar(TTrie tr, char* str);
 int tr_pertenece(TTrie tr, char* str);
