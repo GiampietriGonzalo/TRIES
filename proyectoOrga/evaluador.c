@@ -26,13 +26,13 @@ void ev_liberar_auxiliar(TTrie tr, TNodo nodo){
 	TListaOrdenada hijos=nodo->hijos;
 	TPosicion pos=lo_primera(hijos);
 
-	
+
 	while(pos!=POS_NULA){
-		ev_liberar_auxiliar(tr,pos->elemento);	
+		ev_liberar_auxiliar(tr,pos->elemento);
 		lo_eliminar(hijos,pos);
 		pos=lo_siguiente(hijos,pos);
 	}
-	
+
 	free(nodo->hijos);
 
 }
@@ -46,7 +46,7 @@ int ev_toLowerCase_auxiliar(int c){
 void ev_vaciar_auxiliar(char c[]){
 	//Vacia el arreglo de caractere pasado por parámetro
     int i=0;
-	while(c[i]!='\0'){
+	while(i<50){
 		c[i]='\0';
 		i++;
 	}
@@ -58,7 +58,7 @@ int ev_porcentaje_auxiliar(TNodo nodo){
 		/*Recorre el trie hacia abajo a través de los hijos del nodo pasado por
 		por parámetro contando la cantidad de palabras de la cual es prefija la palabra
 		que se pasa por parámetro en la función cascar "prefijos"*/
-	
+
     int cont=nodo->contador;
     TPosicion aux;
     if(lo_size(nodo->hijos)>0){
@@ -175,6 +175,7 @@ void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
 
 		if(lo_size(nodo->padre->hijos) > 1 && lo_size(nodo->hijos)==0)
 			buffer[strlen(buffer) - 1]='\0';
+
 	}
 
 
@@ -210,7 +211,7 @@ void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
 int ev_comienzaCon_auxiliar(TNodo nodito,char c){
 	/*Recorre el trie hacia abajo a través de los hijos del nodo nodito pasado por
 		parámetro, contando cúantas palabras comienzan con el caracter c.*/
-	
+
 	int cont=0;
 
 	if(lo_size(nodito->hijos)==0)
@@ -236,7 +237,7 @@ int ev_comienzaCon_auxiliar(TNodo nodito,char c){
 
 void mostrarPalabras(TTrie tr){
 	/*
-		permite visualizar el listado de todas las palabras que posee el archivo, 
+		permite visualizar el listado de todas las palabras que posee el archivo,
 		junto con la cantidad de apariciones de la misma.
 	*/
 	char buffer[50]={""};
@@ -252,10 +253,16 @@ void mostrarPalabras(TTrie tr){
 
 int consultar(TTrie tr,char* str){
 	/*
-	permite determinar si una palabra ingresada pertenece o no al archivo, 
+	permite determinar si una palabra ingresada pertenece o no al archivo,
 	y en consecuencia, cuántas veces esta se repite en el archivo.
 	*/
-	
+    char* c=str;
+    while(*c!='\0'){
+      if(*c>64 && *c<91) //A=65 , Z=90
+        *c=ev_toLowerCase_auxiliar(*c);
+      c++;
+    }
+
 	int i=tr_pertenece(tr,str);
 	int cant=0;
 	if(i==TRUE)
@@ -286,7 +293,7 @@ int comienzaCon(TTrie tr,char c){
 int esPrefijo(TTrie tr,char* str){
 	/*Determina si al menos una palabra perteneciente al Trie tr es posfija de una palabra pasada por
 		parámetro que también encuentra en el trie.*/
-	
+
 	int res=FALSE;
 	TNodo ultimo=NULL;
 	if(tr_pertenece(tr,str))
@@ -302,16 +309,17 @@ int esPrefijo(TTrie tr,char* str){
 
 
 int porcentajePrefijo(TTrie tr,char* str){
-		/*Determina y retorna que porcentaje de palabras pertenecientes al Trie tr
-			son posfijas de una palabra pasada por parámetro, que puede o no
-			pertenecer al Trie tr.*/
+    /*Determina y retorna que porcentaje de palabras pertenecientes al Trie tr
+        son posfijas de una palabra pasada por parámetro, que puede o no
+        pertenecer al Trie tr.
+    */
     TNodo nodo=ev_buscar_auxiliar(tr,str);
     int cont=0;
 		TPosicion aux;
-    
+
     if(nodo!=NULL && lo_size(nodo->hijos) > 0){
     	aux= lo_primera(nodo->hijos);
-			
+
 			while(aux!=NULL){
             cont+=ev_porcentaje_auxiliar((TNodo)aux->elemento);
             aux=lo_siguiente(nodo->hijos,aux);
@@ -348,13 +356,12 @@ int main(int i, char *argv[])  {
 	TListaOrdenada hijos;
 	TPosicion pos;
 
-
     printf("\n");
     printf("-------<<<EVALUADOR>>>-------\n");
 
 
 
-	char* puntero; //Permite insertr las palabras leídas al trie
+	char* puntero; //Permite insertar las palabras leídas al trie
 
 
 	/*Lectura de caracteres del archivo
@@ -382,9 +389,10 @@ int main(int i, char *argv[])  {
                 }
 
 
-
-			if (seguir==TRUE && (caracter == EOF || caracter=='\n' || caracter==32))
+			if (seguir==TRUE && (caracter == EOF || caracter=='\n' || caracter==32)){
 				seguir=FALSE;
+                ev_vaciar_auxiliar(palabra);
+            }
 
 			if(seguir==TRUE){
 				palabra[n]=caracter;
@@ -497,23 +505,23 @@ int main(int i, char *argv[])  {
 
 
 		case 6: {
-				
+
 						//LIBERACION DE MEMORIA
 						if(tr_size(tr)>0){
 							hijos=tr->raiz->hijos;
 							pos=lo_primera(hijos);
-							
+
 							while(pos!=POS_NULA){
-								ev_liberar_auxiliar(tr,pos->elemento);	
+								ev_liberar_auxiliar(tr,pos->elemento);
 								lo_eliminar(hijos,pos);
 								pos=lo_siguiente(hijos,pos);
 							}
-		
+
 						}
-			
+
 						free(tr->raiz);
 						free(tr);
-						
+
             fclose(archivo);
             exit(0);
 
