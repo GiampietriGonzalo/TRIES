@@ -13,11 +13,14 @@ int (* f_comp)(void *, void *);
 
 //FUNCIONES AUXILIARES
 
-int toLowerCase(int c){
+int ev_toLowerCase_auxiliar(int c){
+	//Retorna el entero correspondiente al código ASCII del caracter pasado por parámetro en minúscula
+	//Se asume que previamente se controlo que el caracter c fuera una letra mayúscula entre A y Z.
 	return c+=32;
 }
 
-void vaciar(char c[]){
+void ev_vaciar_auxiliar(char c[]){
+	//Vacia el arreglo de caractere pasado por parámetro
     int i=0;
 	while(c[i]!='\0'){
 		c[i]='\0';
@@ -28,7 +31,10 @@ void vaciar(char c[]){
 
 
 int cant_prefijos_auxiliar(TNodo nodo){
-
+		/*Recorre el trie hacia abajo a través de los hijos del nodo pasado por
+		por parámetro contando la cantidad de palabras de la cual es prefija la palabra
+		que se pasa por parámetro en la función cascar "prefijos"*/
+	
     int cont=nodo->contador;
     TPosicion aux;
     if(lo_size(nodo->hijos)>0){
@@ -116,8 +122,9 @@ TNodo ev_buscar_auxiliar(TTrie tr,char* str){
     return nodoActual;
 }
 
-void imprimir(TTrie tr , char c[]){
-
+void ev_imprimir_auxiliar(TTrie tr , char c[]){
+	/*Imprime la palabra pasada por parámetro, indicando cuánta
+		veces se encuentra en el Trie tr.*/
 
 	TNodo ultimo=ev_buscar_auxiliar(tr,c);
 	printf("%s (%d)" , c,ultimo->contador);
@@ -126,7 +133,8 @@ void imprimir(TTrie tr , char c[]){
 }
 
 void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
-
+	/*Recorre el trie y concatena los rotulos de los nodos para formas las
+		palabras que se encuentran en el Trie, para luego imprimirlas.*/
 
 	TPosicion hijo;
 	char * auxchar = malloc(sizeof(char));
@@ -139,7 +147,7 @@ void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
 
 	if (nodo->contador > 0){
 
-		imprimir(tr,buffer);
+		ev_imprimir_auxiliar(tr,buffer);
 
 		if(lo_size(nodo->padre->hijos) > 1 && lo_size(nodo->hijos)==0)
 			buffer[strlen(buffer) - 1]='\0';
@@ -177,7 +185,9 @@ void ev_mostrar_auxiliar(TTrie tr,char buffer[], TNodo nodo){
 }
 
 int ev_comienzaCon_auxiliar(TNodo nodito,char c){
-
+	/*Recorre el trie hacia abajo a través de los hijos del nodo nodito pasado por
+		parámetro, contando cúantas palabras comienzan con el caracter c.*/
+	
 	int cont=0;
 
 	if(lo_size(nodito->hijos)==0)
@@ -207,7 +217,7 @@ void mostrarPalabras(TTrie tr){
 	TPosicion hijo=lo_primera(tr->raiz->hijos);
 
 	while(hijo!=NULL){
-		vaciar(buffer);
+		ev_vaciar_auxiliar(buffer);
 		ev_mostrar_auxiliar(tr,buffer,hijo->elemento);
 		hijo=lo_siguiente(tr->raiz->hijos,hijo);
 
@@ -243,7 +253,9 @@ int comienzaCon(TTrie tr,char c){
 
 
 int esPrefijo(TTrie tr,char* str){
-
+	/*Determina y retorna cuántas palabras pertenecientes al Trie tr son posfijas de una palabra pasada por
+		parámetro que también encuentra en el trie.*/
+	
 	int res=FALSE;
 	TNodo ultimo=NULL;
 	if(tr_pertenece(tr,str))
@@ -259,7 +271,9 @@ int esPrefijo(TTrie tr,char* str){
 
 
 int porcentajePrefijo(TTrie tr,char* str){
-
+		/*Determina y retorna que porcentaje de palabras pertenecientes al Trie tr
+			son posfijas de una palabra pasada por parámetro, que puede o no
+			pertenecer al Trie tr.*/
     TNodo nodo=ev_buscar_auxiliar(tr,str);
     int cont=0;
     if(nodo!=NULL)
@@ -313,13 +327,13 @@ int main(int i, char *argv[])  {
 
 		n=0;
 		seguir=TRUE;
-        vaciar(palabra);
+        ev_vaciar_auxiliar(palabra);
 
 
 		while(seguir==TRUE && caracter!=32){
 
 			if(caracter>64 && caracter<91) //A=65 , Z=90
-				caracter=toLowerCase(caracter);
+				caracter=ev_toLowerCase_auxiliar(caracter);
 			else
 				if((caracter<97 || caracter>122) && caracter!=EOF && caracter!='\n'){ //a=97 , z=122
 					seguir=FALSE;
