@@ -13,6 +13,10 @@ int (* f_comp)(void *, void *);
 
 //FUNCIONES AUXILIARES
 
+int toLowerCase(int c){
+	return c+=32;
+}
+
 void vaciar(char c[]){
     int i=0;
 	while(c[i]!='\0'){
@@ -283,54 +287,76 @@ int main(int i, char *argv[])  {
         exit(0);
 	}
 
-	int caracter;
-	char palabra[50];
+	int caracter; //caracter que lee el archivo
+	char palabra[50]; //String al cual se le agregan los  caracteres del archivo para luego ingresarlos al Trie
 	int n=0;
-	int seguir=1;
+	int seguir=TRUE;
 	TTrie tr=crear_trie();
 
-	printf("\n");
+
+    printf("\n");
+    printf("-------<<<EVALUADOR>>>-------\n");
 
 
-	char* puntero;
 
-	//REIMPLEMENTAR ESTA PARTE PARA QUE SOLO ADMITA CIERTOS CARACTERES
+	char* puntero; //Permite insertr las palabras leídas al trie
+
+
+	/*Lectura de caracteres del archivo
+
+     Toda palabra que contenga al menos un caracter fuera de los siguientes rangos:
+     a..z ; A..Z  , será descartada.
+
+	*/
 	caracter = fgetc(archivo);
-	while(seguir==1 && caracter!= EOF){
+	while(seguir==TRUE && caracter!= EOF){
 
 		n=0;
-		seguir=1;
-		puntero=palabra;
+		seguir=TRUE;
+        vaciar(palabra);
 
-		while(*puntero!='\0'){
-			*puntero='\0';
-			puntero++;
-			n++;
-		}
 
-		n=0;
+		while(seguir==TRUE && caracter!=32){
 
-		while(seguir==1 && caracter!=32){
+			if(caracter>64 && caracter<91) //A=65 , Z=90
+				caracter=toLowerCase(caracter);
+			else
+				if((caracter<97 || caracter>122) && caracter!=EOF && caracter!='\n'){ //a=97 , z=122
+					seguir=FALSE;
 
+                }
+
+
+
+			if (seguir==TRUE && (caracter == EOF || caracter=='\n' || caracter==32))
+				seguir=FALSE;
+
+			if(seguir==TRUE){
 				palabra[n]=caracter;
 				caracter = fgetc(archivo);
 				n++;
-
-				if (caracter == EOF || caracter=='\n' || caracter==32)
-						seguir=0;
+			}
 
 		}
 
 		if (caracter==32 && caracter!=EOF){
 				caracter = fgetc(archivo);
-				seguir=1;
+				seguir=TRUE;
 		}
 
 
-		printf("%s \n" , palabra);
+
+
 		puntero=palabra;
 
-		tr_insertar(tr,puntero);
+     if(seguir==TRUE)
+        tr_insertar(tr,puntero);
+     else
+        if (caracter!=EOF){
+            while(caracter!=' ' && caracter!=EOF)
+                caracter = fgetc(archivo);
+            seguir=TRUE;
+        }
 
 	}
 
@@ -339,6 +365,7 @@ int main(int i, char *argv[])  {
     printf("\n");
 
 	do {
+        opcion=0;
 
 		printf("[1] Mostrar palabras\n");
 		printf("[2] Consultar\n");
@@ -347,6 +374,7 @@ int main(int i, char *argv[])  {
 		printf("[5] Porcentaje prefijo\n");
 		printf("[6] Salir\n");
 
+        printf("\n");
 		scanf("%d",&opcion);
 		printf("\n");
 
@@ -371,6 +399,7 @@ int main(int i, char *argv[])  {
 			else
 				printf("La palabra no pertenece al archivo\n");
 
+            printf("\n");
 			break;
 		}
 
@@ -381,7 +410,7 @@ int main(int i, char *argv[])  {
 			scanf("\n %c",&c);
 			i=comienzaCon(tr,c);
 			printf("Hay %d palabras que comienzan con la letra %c \n",i,c);
-
+            printf("\n");
 			break;
 		}
 
@@ -392,6 +421,7 @@ int main(int i, char *argv[])  {
 			int k=esPrefijo(tr,s);
 			if(k==1) printf("La palabra es prefijo de al menos una palabra en el archivo\n");
 			else printf("La palabra no es prefijo de ninguna palabra\n");
+			printf("\n");
 			break;
 		}
 
@@ -402,28 +432,43 @@ int main(int i, char *argv[])  {
 				scanf("\n%s",s);
             	int k=porcentajePrefijo(tr,s);
             	printf("La palabra es prefijo del %d porciento de las palabras en el archivo\n" , k);
-            	printf("\n");
    			}
 			else
-                printf("No puedo calcular porcentaje de un archivo vacio");
+                printf("[NO SE PUEDE CALCULAR PORCENTAJE DE UN ARCHIVO VACIO]\n");
+
+            printf("\n");
 			break;
 		}
 
 
-		case 6: {fclose(archivo); exit(0); }
+		case 6: {
 
-		default: {printf("Opcion incorrecta \n");}
+            //FREES ACA
+            fclose(archivo);
+            exit(0);
+
+		}
+
+		default: {printf("[OPCION INCORRECTA]\n");}
 
 
         }
 
         printf("\n");
 
+        /*if(opcion<49 || opcion >57)
+            break;*/
 
 
-	} while(opcion!=6);
+	} while(opcion!=0);
+
+	if (opcion==0)
+        printf("RESPETE LAS OPCIONES. SOLO NUMEROS. SE CIERRA EL PROGRAMA. \n");
+
+    printf("\n");
 
     fclose(archivo);
+
 
 	return 0;
 }
