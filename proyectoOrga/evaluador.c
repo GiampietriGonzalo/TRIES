@@ -277,6 +277,12 @@ int consultar(TTrie tr,char* str){
 int comienzaCon(TTrie tr,char c){
 	//Retorna la cantidad de palabras que comienzan con la letra dada.
 
+
+     if(c>64 && c<91) //A=65 , Z=90
+        c=ev_toLowerCase_auxiliar(c);
+
+
+
 	int i=0;
 	char* ch=malloc(sizeof(char));
 	*ch=c;
@@ -292,12 +298,19 @@ int comienzaCon(TTrie tr,char c){
 
 int esPrefijo(TTrie tr,char* str){
 	/*Determina si al menos una palabra perteneciente al Trie tr es posfija de una palabra pasada por
-		parámetro que también encuentra en el trie.*/
+		parámetro.*/
+
+	char* c=str;
+    while(*c!='\0'){
+      if(*c>64 && *c<91) //A=65 , Z=90
+        *c=ev_toLowerCase_auxiliar(*c);
+      c++;
+    }
 
 	int res=FALSE;
 	TNodo ultimo=NULL;
-	if(tr_pertenece(tr,str))
-		ultimo=ev_buscar_auxiliar(tr,str);
+
+	ultimo=ev_buscar_auxiliar(tr,str);
 
 	if(ultimo!=NULL && lo_size(ultimo->hijos)>0)
 		res=TRUE;
@@ -313,6 +326,14 @@ int porcentajePrefijo(TTrie tr,char* str){
         son posfijas de una palabra pasada por parámetro, que puede o no
         pertenecer al Trie tr.
     */
+
+    char* c=str;
+    while(*c!='\0'){
+      if(*c>64 && *c<91) //A=65 , Z=90
+        *c=ev_toLowerCase_auxiliar(*c);
+      c++;
+    }
+
     TNodo nodo=ev_buscar_auxiliar(tr,str);
     int cont=0;
 		TPosicion aux;
@@ -426,7 +447,7 @@ int main(int i, char *argv[])  {
 
 	int opcion=0;
     printf("\n");
-
+    printf("INGRESE LA OPCION DESEADA\n");
 	do {
         opcion=0;
 
@@ -467,10 +488,12 @@ int main(int i, char *argv[])  {
 		}
 
 		case 3:{
-			char c;
+
+			char c,str[3];
 			int i;
 			printf("Ingrese una letra:\n");
-			scanf("\n %c",&c);
+			scanf("\n %s",str);
+			c=str[0];
 			i=comienzaCon(tr,c);
 			printf("Hay %d palabras que comienzan con la letra %c \n",i,c);
             printf("\n");
@@ -489,16 +512,16 @@ int main(int i, char *argv[])  {
 		}
 
 		case 5:{
-			if(tr->cantidad_elementos>0){
-				printf("Ingrese el prefijo a consultar: ");
+                printf("Ingrese el prefijo a consultar: ");
 				char s[50];
 				scanf("\n%s",s);
+			if(tr->cantidad_elementos>0){
             	int k=porcentajePrefijo(tr,s);
             	printf("La palabra es prefijo del %d porciento de las palabras en el archivo\n" , k);
    			}
-			else
+			else{
                 printf("[NO SE PUEDE CALCULAR PORCENTAJE DE UN ARCHIVO VACIO]\n");
-
+            }
             printf("\n");
 			break;
 		}
@@ -523,23 +546,26 @@ int main(int i, char *argv[])  {
 						free(tr);
 
             fclose(archivo);
+            printf("GRACIAS, VUELVA PRONTOS\n");
+            printf("\n");
             exit(0);
 
 		}
 
-		default: {printf("[OPCION INCORRECTA]\n");}
+		default: {printf("[OPCION INCORRECTA,REINGRESE OPCION]\n");}
 
 
    }
 
-        printf("\n");
+        printf("opcion: %d \n" , opcion);
 
+        printf("INGRESE LA OPCION DESEADA\n");
 
 
 	} while(opcion!=0);
 
 	if (opcion==0)
-        printf("RESPETE LAS OPCIONES. SOLO NUMEROS. SE CIERRA EL PROGRAMA. \n");
+        printf("RESPETE LAS OPCIONES. SOLO NUMEROS DISTINTOS DE CERO. SE CIERRA EL PROGRAMA. \n");
 
     printf("\n");
 
